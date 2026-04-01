@@ -25,5 +25,6 @@ public class StudentTest1 {
         System.out.println(stu1.name + "---" + stu1.age + "---" + Student.school);
         System.out.println(stu2.name + "---" + stu2.age + "---" + Student.school);
         System.out.println(stu3.name + "---" + stu3.age + "---" + Student.school);
+
     }
 }

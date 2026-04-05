@@ -1,6 +1,6 @@
 package day09_ObjectBasic.permission;
 
-import com.itheima.permission.demo.A;
+import day10_ObejectHigh.permission.demo.A;
 
 public class PermissionDemo {
     /*

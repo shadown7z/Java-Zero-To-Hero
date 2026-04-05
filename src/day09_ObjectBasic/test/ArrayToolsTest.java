@@ -1,6 +1,6 @@
 package day09_ObjectBasic.test;
 
-import com.itheima.tools.ArrayTools;
+import day10_ObejectHigh.tools.ArrayTools;
 
 public class ArrayToolsTest {
     public static void main(String[] args) {

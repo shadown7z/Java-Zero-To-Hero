@@ -1,6 +1,6 @@
 package day09_ObjectBasic.test;
 
-import com.itheima.pojo.Student;
+import day10_ObejectHigh.pojo.Student;
 
 public class StudentTest {
     public static void main(String[] args) {

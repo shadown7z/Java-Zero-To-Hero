@@ -246,3 +246,6 @@ abstract class Animal {
 
 **接口定义和使用：接口关键字`interface`来定义，接口和类之间是实现关系，通过`implements`关键字表示**
 
+**2026年4月16日：**
+
+**IDEA快捷键：Ctrl+R 一键替换**

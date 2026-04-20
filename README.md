@@ -250,4 +250,115 @@ abstract class Animal {
 
 **IDEA快捷键：Ctrl+R 一键替换**
 
-**2026年4月19日:休息一天**
+**2026年4月19日:**
+
+**栈：先进后出**
+
+**队列：先进先出**
+
+**数据结构：**
+
+**数组：查询与更改快，增删慢**
+
+**链表：查询与修改慢，增删相对于数组较快，首尾操作极快**
+
+**泛型：1.统一数据类型。2.将运行期的错误提升到了编译期。（如果没有指定类型默认为Object）**
+
+**泛型常见标识符：E:Element元素。T:Type类型。K:Key键。V:Value值**
+
+**泛型非静态方法：泛型是根据类的泛型去匹配的**
+
+**泛型静态方法：需要声明出自己独立的泛型**
+
+**2026年4月20日：**
+
+**TreeSet保留重复的方法：CompareTo比较过后，返回非0数字(1或-1最好)进行保留**
+
+**TreeSet中比较器排序优先于自然排序（重写CompareTo方法的排序）**
+
+**TreeSet比较器排序，参数1-参数2，正序。参数2-参数1倒序**
+
+**HashSet集合保证元素唯一，需要同时重写hashCode和equals方法**
+
+**HashSet底层结构（jdk8版本）：数组+链表+红黑树**
+
+**HashSet底层原理：（jdk8以前头插法，jdk8以后尾插法）字符串比较时计算它的取模值（哈希值），例如数组长度15，取模值15。JDK8开始，当链表长度超过8，且数组长度>=64时，自动将链表转换为红黑树**
+
+**HashSet当数组存满到16 * 0.75 = 12 时，就自动扩容，每次扩容为原先容量的两倍（0.75为加载因子）**
+
+**LinkHashSet:有序，不重复**
+
+**应用场景：想要集合中的元素可重复，就用ArrayList集合。相对集合中的元素去重，用HashSet,基于哈希表**
+
+**相对集合中的元素去重，而且保证存取顺序，用LinkedHashSet集合，基于哈希表和双链表，效率低于HashSet**
+
+**相对集合中的元素进行排序，用TreeSet集合，基于红黑树**
+
+**Collections工具类：可变参数，可以在形参中接收多个数据，格式`数据类型...参数名称`**
+
+**Map集合：一种双列集合，每个元素包含两个数据，元素格式`key = value`（键值对格式）**
+
+**Map常用的API：`map.remove`删除(根据键名删除键值对),`map.put`添加或覆盖，如果键名相同，则覆盖前一个的value值，并返回**
+
+**`map.containsKey`，按键查找。`map.containsValue`，按值查找**
+
+**Map遍历的三种方式：**
+1. 键找值（通过`KeySet`获取键，通过`get`获取值）
+```java
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<>();
+        map.put("张三", "北京");
+        map.put("李四", "上海");
+        map.put("王五", "成都");
+
+        // 1. 获取Map集合中, 所有的键
+        Set<String> keySet = map.keySet();
+        // 2. 遍历set集合, 获取每一个键
+        for (String key : keySet) {
+            // 3. 通过map集合的get方法, 根据键查找对应的值
+            String value = map.get(key);
+            System.out.println(key + "---" + value);
+        }
+    }
+```
+2. 通过键值对对象获取键和值
+```java
+    public static void main(String[] args) {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("张三", "北京");
+        map.put("李四", "北京");
+        map.put("王五", "北京");
+
+        // 1. 调用entrySet方法, 获取所有的键值对对象.
+        Set<Map.Entry<String, String>> entrySet = map.entrySet();
+        // 2. 遍历Set集合, 获取每一个键值对对象
+        for (Map.Entry<String, String> entry : entrySet) {
+            // 3. 通过键值对对象, 获取键和值
+            String key = entry.getKey();
+            String value = entry.getValue();
+            System.out.println(key + "---" + value);
+        }
+    }
+```
+3. 通过foreach方法遍历
+```java
+    public static void main(String[] args) {
+    Map<String, String> map = new TreeMap<>();
+    map.put("张三", "北京");
+    map.put("李四", "北京");
+    map.put("王五", "北京");
+
+    map.forEach((key, value) -> System.out.println(key + "---" + value));
+    map.forEach((k, v) -> System.out.println(k + "---" + v));
+}
+```
+
+**Map接口：**
+- 双列集合的数据结构，都只针对于键有效，和值没有关系
+- TreeMap : 键(红黑树)(键排序)
+- HashMap : 键(哈希表)(键唯一)
+- LinkedHashMap : 键(哈希表 + 双向链表)(键唯一，并保证顺序)
+
+**Stream流：配合Lambda表达式，简化集合和数组操作**
+> - Ctrl + Alt + M 代码段直接变成方法(选中代码段)
+> - 流中的操作不会修改数据源,需要做Stream流的收集操作

@@ -362,3 +362,267 @@ abstract class Animal {
 **Stream流：配合Lambda表达式，简化集合和数组操作**
 > - Ctrl + Alt + M 代码段直接变成方法(选中代码段)
 > - 流中的操作不会修改数据源,需要做Stream流的收集操作
+
+**2026年4月22日：异常**
+
+**Exception异常：**
+- 运行时异常
+- 编译时异常(如日期解析异常)
+
+**解决方式：**
+- 抛出异常(throws)
+- 捕获异常(try...catch)
+- Ctrl + T 快捷键选择常用的逻辑代码
+- `e.printStackTrace`和`throw new xxx`
+
+**运行异常代码部分：（运行异常继承RuntimeException）**
+```java
+package day15_Exception;
+
+public class ExceptionDemo1 {
+    // 主代码
+    public static void main(String[] args) {
+        int x = 101;
+        System.out.println("开始了");
+        try {
+            save(x);
+            System.out.println("执行成功了");
+        } catch (Exception e) {
+            e.printStackTrace(); // 打印异常对象信息
+            System.out.println("执行失败了");
+        }
+        System.out.println("结束了");
+    }
+
+    private static void save(int age) {
+
+        if (age <= 0 || age > 100) {
+            throw new ArithmeticException("/x is error");
+        }
+        System.out.println("年龄保存成功了，年龄是："+age);
+
+    }
+
+}
+```
+
+```java
+package day15_Exception;
+
+public class ARuntimeException extends RuntimeException  {
+    //自定义的运行异常代码
+    public ARuntimeException(String message) {
+        super(message);
+    }
+}
+```
+
+**开发中对于异常的常见处理方式：**
+- 捕获异常，记录异常并响应合适的信息给用户
+- 捕获异常，尝试重新修复
+
+**File类：**
+- 绝对路径:`File f = new File("D:\\A.txt)` ,没有文件或文件夹返回false
+- 相对路径:相对于项目
+- `f.getAbsoluteFile()` 获取绝对路径
+- `File f = new File("A.txt")`,`f.createNewFile()` 创建文件
+
+**File类常见的API（判断相关）:**
+- `f.isDirectory()`,判断此路径名表示的File是否为文件夹
+- `f.isFile()`,判断此路径名表示的File是否为文件
+- `f.exists()`,判断此路径名表示的File是否存在
+
+**File类常见的API（获取相关）:**
+- `f.length()`,返回文件的大小(字节数量)
+- `f.getAbsolutePath()`,返回文件的绝对路径
+- `f.getPath()`,返回定义文件时使用的路径
+- `f.getName()`,返回文件的名称,带后缀
+- `f.lastModified()`,返回文件的最后修改时间(时间毫秒值)
+
+**File类常见的API（创建和删除相关）:**
+- `f.createNewFile()`,创建一个新的空的文件
+- `f.mkdir()`,只能创建一级文件夹
+- `f.mkdirs()`,可以创建多级文件夹
+- `f.delete()`,删除文件或文件夹(强制删除)
+
+**File类常见的API（遍历相关）:**
+- `File[] listFiles()`,获取当前目录下所有的"一级文件对象",返回File数组
+```java
+import java.io.File;
+
+public class FileTest2 {
+    /*
+        需求：键盘录入一个文件夹路径，找出这个文件夹下所有的 .java 文件
+
+        public File[] listFiles()  获取当前目录下所有的  “一级文件对象”  返回 File 数组
+     */
+    public static void main(String[] args) {
+
+        File dir = FileTest1.getDir();
+
+        printJavaFile(dir);
+    }
+
+    private static void printJavaFile(File dir) {
+        // 1. 获取当前文件夹下所有的文件和文件夹对象
+        File[] files = dir.listFiles();
+        // 2. 遍历数组, 获取每一个文件和文件夹对象
+        for (File file : files) {
+            // 3. 判断当前对象是否是文件, 并且是java文件
+            if(file.isFile() && file.getName().endsWith(".java")){
+                // 4. 打印在控制台
+                System.out.println(file);
+            }
+        }
+    }
+}
+```
+**递归:方法直接或间接调用本身**
+> 递归如果没有控制好终止，会出现递归死循环，导致内存溢出现象
+```java
+public class RecursionDemo2 {
+    /*
+        需求: 使用递归求5的阶乘
+
+        5的阶乘（5!）:  5 * 4 * 3 * 2 * 1
+
+            5的阶乘（5!）:  5 * 4!
+            4的阶乘（4!）:  4 * 3!
+            3的阶乘（3!）:  3 * 2!
+            2的阶乘（2!）:  2 * 1!
+            1的阶乘（1!）:  1
+     */
+    public static void main(String[] args) {
+        System.out.println(jc(5));
+    }
+
+    public static int jc(int num) {
+        if (num == 1) {
+            return 1;
+        } else {
+            // 思路: 需要调用一个方法, 获取4的阶乘
+            // 5 * jc(4)
+            // 4 * jc(3)
+            // ...
+            return num * jc(num - 1);
+        }
+    }
+}
+```
+
+**递归练习——不死身兔（斐波那契数列）：**
+```java
+public class RecursionTest {
+    /*
+        有一对兔子，从出生后第3个月起每个月都生一对兔子
+        小兔子长到第三个月后每个月又生一对兔子，假如兔子都不死，问第二十个月的兔子对数为多少？
+
+        规律: 从第三个月开始，兔子的对数是前两个月相加的和
+     */
+    public static void main(String[] args) {
+        System.out.println(get(20));
+    }
+
+    public static int get(int month) {
+        // 第一个, 第二个月兔子的对数为1
+        if (month == 1 || month == 2) {
+            return 1;
+        } else {
+            // 第三个月: 第一个月 + 第二个月  month 3
+            // 第四个月: 第二个月 + 第三个月  month 4
+            // ...
+            return get(month - 2) + get(month - 1);
+        }
+    }
+}
+```
+
+**递归练习——找出所有.java文件**
+```java
+public class FileTest3 {
+    /*
+        需求：键盘录入一个文件夹路径，找出这个文件夹下所有的 .java 文件 (考虑子文件夹)
+
+     */
+    public static void main(String[] args) {
+        File dir = FileTest1.getDir();
+        printJavaFile(dir);
+    }
+
+    private static void printJavaFile(File dir) {
+        // 获取当前目录下, 所有文件和文件夹对象
+        File[] files = dir.listFiles();
+        // 遍历数组, 获取每一个文件和文件夹对象
+        for (File file : files) {
+            // 如果是文件, 并且是.java文件, 就打印在控制台
+            if (file.isFile() && file.getName().endsWith(".java")) {
+                System.out.println(file);
+            } else if (file.isDirectory()) {
+                // 说明是文件夹, 进入这个文件夹, 继续查找.java文件
+                // 思路: 需要调用一个方法, 进入文件夹查找.java文件, 发现自己这个方法就是解决此问题, 递归调用.
+                if (file.listFiles() != null) {
+                    printJavaFile(file);
+                }
+            }
+        }
+    }
+}
+```
+
+**递归练习——删除文件夹**
+```java
+public class FileTest4 {
+    /*
+        需求 : 设计一个方法, 删除文件夹
+        注意 : delete() 只能删除空文件夹
+     */
+    public static void main(String[] args) {
+        File dir = new File("E:\\test");
+        deleteDir(dir);
+    }
+
+    private static void deleteDir(File dir) {
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+                file.delete();
+            } else {
+                if (file.listFiles() != null) {
+                    deleteDir(file);
+                }
+            }
+        }
+        dir.delete();
+    }
+}
+```
+**递归练习——统计文件夹大小**
+```java
+public class FileTest5 {
+    /*
+        需求: 键盘录入一个文件夹路径，统计文件夹的大小
+     */
+    public static void main(String[] args) {
+        File dir = FileTest1.getDir();
+
+        long length = getDirLength(dir);
+
+        System.out.println("字节数量为:" + length);
+    }
+
+    private static long getDirLength(File dir) {
+        long result = 0;
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+                result += file.length();
+            } else {
+                if (file.listFiles() != null) {
+                    result += getDirLength(file);
+                }
+            }
+        }
+        return result;
+    }
+}
+```

@@ -626,3 +626,746 @@ public class FileTest5 {
     }
 }
 ```
+**2026年4月22日：常用API与多线程**
+
+**Math类：**
+```java
+    /*
+        Math类 : 包含执行基本数字运算的方法
+
+        --------------------------------------------------------------------
+        public static int abs (int a) : 获取参数绝对值
+        public static double ceil (double a) : 向上取整
+        public static double floor (double a) : 向下取整
+        public static int round (float a) : 四舍五入
+        public static int max (int a, int b) : 获取两个int值中的较大值
+        public static double pow (double a,double b) : 返回a的b次幂的值
+        public static double random () : 返回值为double的随机值，范围[0.0,1.0)
+        --------------------------------------------------------------------
+     */
+```
+**System类:**
+```java
+    /*
+    System类常见方法 :
+
+        1. public static void exit (int status) : 终止当前运行的 Java 虚拟机，非零表示异常终止
+        2. public static long currentTimeMillis () : 返回当前系统的时间毫秒值形式
+                                                            - 返回1970年1月1日 0时0分0秒, 到现在所经历过的毫秒值
+                                                            - 返回1970年1月1日 8时0分0秒, 到现在所经历过的毫秒值
+
+        3. public static void arraycopy(Object src, int srcPos, Object dest, int destPos, int length) : 数组拷贝
+
+                                                    1. 数据源数组
+                                                    2. 起始索引
+                                                    3. 目的地数组
+                                                    4. 目的数组的起始索引
+                                                    5. 拷贝的个数
+          System.arraycopy([源数组],[起始索引],[目的数组],[目的数组起始索引],[拷贝的个数])
+ */
+```
+**包装类：** 将基本数据类型，包装成类(变成引用数据类型)
+> 除了`Integer(int)`,`Character(char)`两种其余都是首字母大写
+
+**基本数据类型包装成类：**
+```java
+    /*
+        将基本数据类型, 包装成类 (变成引用数据类型)
+
+        byte            Byte
+        short           Short
+        int             Integer
+        long            Long
+        char            Character
+        float           Float
+        double          Double
+        boolean         Boolean
+
+        手动装箱: 手动调用 Integer.valueOf() 方法, 将基本数据类型, 手动包装为类
+        手动拆箱: 手动调用 Integer中的 intValue() 方法, 将包装类对象, 转换为基本数据类型
+
+        自动拆装箱: 基本数据类型和对应的包装类, 可以直接运算, 操作起来非常便捷
+     */
+```
+**Integer类的常见方法:**
+```java
+    /*
+        Integer类的常见方法:
+
+            public static String toBinaryString(int i)      得到二进制
+            public static String toOctalString(int i)       得到八进制
+            public static String toHexString(int i)         得到十六进制
+            public static int parseInt(String s)            将字符串类型的整数转成int类型的整数
+
+     */
+```
+**练习：**
+```java
+    /*
+        已知字符串
+        String s = "10,50,30,20,40";
+
+        请将该字符串转换为整数并存入数组
+        随后求出最大值打印在控制台
+     */
+    public static void main(String[] args) {
+        String content = "10,50,30,20,40";
+
+        String[] arr = content.split(",");
+
+        int[] nums = new int[arr.length];
+
+        for (int i = 0; i < arr.length; i++) {
+            nums[i] = Integer.parseInt(arr[i]);
+        }
+
+        int max = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > max) {
+                max = nums[i];
+            }
+        }
+
+        System.out.println("最大值为:" + max);
+    }
+```
+
+**BigDecimal类:（解决小数运算精度损失问题）**
+```java
+    /*
+        BigDecimal类 : 用于解决小数运算中, 出现的不精确问题
+
+        BigDecimal创建对象 :
+
+                public BigDecimal(double val) : 不推荐, 无法保证小数运算的精确
+                ---------------------------------------------------------------
+                public BigDecimal(String val)
+                public static BigDecimal valueOf(double val)
+
+        BigDecimal常用成员方法 :
+
+                public BigDecimal add(BigDecimal b) : 加法
+                public BigDecimal subtract(BigDecimal b) : 减法
+                public BigDecimal multiply(BigDecimal b) : 乘法
+                public BigDecimal divide(BigDecimal b) : 除法
+                public BigDecimal divide (另一个BigDecimal对象，精确几位，舍入模式) : 除法
+
+                                RoundingMode.HALF_UP : 四舍五入
+                                RoundingMode.UP : 进一法
+                                RoundingMode.DOWN : 去尾法
+
+        注意: 如果使用BigDecimal运算, 出现了除不尽的情况, 就会出现异常
+     */
+```
+**Arrays数组工具类:**
+```java
+        /*
+            Arrays 数组操作工具类, 专门用于操作数组元素
+    
+            public static String toString(类型[] a)                将数组元素拼接为带有格式的字符串
+            public static boolean equals(类型[] a, 类型[] b)        比较两个数组内容是否相同 (元素, 个数, 顺序)
+            public static int binarySearch(int[] a, int key)       查找元素在数组中的索引 (二分查找法)
+                                                                            - 注意: 操作的数组, 必须是排好顺序.
+            public static void sort(类型[] a)                       对数组进行默认升序排序
+         */
+```
+**Data类:**
+```java
+    /*
+         Date类 : 表示时间的类
+
+            1. 构造方法 :
+
+                public Date() : 将当前时间, 封装为Date日期对象
+                public Date(long time) : 把时间毫秒值转换成Date日期对象
+
+            2. 常见方法 :
+
+                public long getTime() : 返回从1970年1月1日 00:00:00走到此刻的总的毫秒数
+                public void setTime(long time) : 设置日期对象的时间为当前时间毫秒值对应的时间
+
+     */
+```
+**SimpleDateFormat类:(时间格式化)**
+```java
+    /*
+    SimpleDateFormat类 : 用于日期格式化
+
+    1. 构造方法 :
+
+            public SimpleDateFormat() : 创建一个日期格式化对象, 使用 [默认模式]
+            public SimpleDateFormat(String pattern) : 创建一个日期格式化对象, [手动指定模式]
+
+    2. 常用方法 :
+
+            public final String format(Date date) : 将日期对象, 转换为字符串
+            public final Date parse(String source) : 将日期字符串, 解析为日期对象
+
+ */
+```
+**LocalDateTime类：**
+```java
+    /*
+       ------------------------------------------
+       LocalDate、LocalTime、LocalDateTime
+
+       对象的创建方式:
+
+       1. now() : 当前时间
+
+       2. of(...) : 设置时间
+
+       ------------------------------------------
+       LocalDateTime 转换LocalDate, LocalTime
+
+       1. toLocalDate()
+       2. toLocalTime()
+    */
+```
+**修改时间:**
+```java
+    public static void main(String[] args) {
+        LocalDateTime nowTime = LocalDateTime.now();
+
+        // 当前时间
+        System.out.println(nowTime);
+        // minus : 减去
+        // minusYears(年), minusMonths(月), minusDays(日), minusWeeks(周), minusHours(时), minusMinutes(分), minusSeconds(秒), minusNanos(纳秒)
+        System.out.println("减一小时:" + nowTime.minusHours(1));
+        System.out.println("减一分钟:" +nowTime.minusMinutes(1));
+        System.out.println("减一秒钟:" +nowTime.minusSeconds(1));
+        System.out.println("减一纳秒:" +nowTime.minusNanos(1));
+
+        System.out.println("对比时间, 确定方法返回的都是新的实例 >>>>>> " + nowTime);
+
+        System.out.println("----------------");
+
+        // plus : 加
+        // plusYears(年), plusMonths(月), plusDays(日), plusWeeks(周), plusHours(时), plusMinutes(分), plusSeconds(秒), plusNanos(纳秒)
+        System.out.println("加一小时:" + nowTime.plusHours(1));
+        System.out.println("加一分钟:" + nowTime.plusMinutes(1));
+        System.out.println("加一秒钟:" + nowTime.plusSeconds(1));
+        System.out.println("加一纳秒:" + nowTime.plusNanos(1));
+
+        System.out.println("---------------");
+
+        // with : 这里体现出的是,设置效果
+        System.out.println("修改的效果:");
+        //withYear(年), withMonth(月), withDayOfMonth(日), withHour(时), withMinute(分), withSecond(秒), withNano(纳秒)
+        System.out.println(nowTime.withYear(2008));
+        System.out.println(nowTime.withMonth(8));
+        System.out.println(nowTime.withDayOfMonth(8));
+        System.out.println(nowTime.withHour(8));
+        System.out.println(nowTime.withMinute(8));
+        System.out.println(nowTime.withSecond(8));
+        System.out.println(nowTime.withNano(8));
+        System.out.println("---------------");
+
+        LocalDate myDate = LocalDate.of(2008, 8, 8);
+        LocalDate nowDate = LocalDate.now();
+
+        //2008-08-08是否在nowDate之前?
+        System.out.println(myDate + "是否在" + nowDate + "之前? " + myDate.isBefore(nowDate));
+
+        //2008-08-08是否在nowDate之后?
+        System.out.println(myDate + "是否在" + nowDate + "之后? " + myDate.isAfter(nowDate));
+        System.out.println("---------------------------");
+
+        // 判断两个时间是否相同
+        System.out.println(myDate.equals(nowDate));
+    }
+```
+**DateTimeFormatter类:(格式化时间):**
+```java
+    /*
+        用于时间的格式化和解析:
+
+        1. 对象的获取 :
+
+                static DateTimeFormatter ofPattern(格式) : 获取格式对象
+
+        2. 格式化 :
+
+                String format(时间对象) : 按照指定方式格式化
+
+        3. 解析 :
+
+                LocalDateTime.parse("解析字符串", 格式化对象);
+                LocalDate.parse("解析字符串", 格式化对象);
+                LocalTime.parse("解析字符串", 格式化对象);
+
+     */
+```
+**ChronoUnitDemo:**
+```java
+/**
+ * ChronoUnit可用于在单个时间单位内测量一段时间，这个工具类是最全的了，可以用于比较所有的时间单位
+ */
+```
+
+**IO流体系结构：字节流(万能流)和字符流(纯文本文件)**
+> 字节流操作中文可能有乱码,这个时候就可以用字符流来代替
+
+**字节流:**
+**FileOutputStream(字节输出流):**
+```java
+    /*
+      字节流写出数据
+
+          构造方法:
+                  1. public FileOutputStream(String name) : 输出流关联文件, 文件路径以字符串形式给出
+                     public FileOutputStream(String name, boolean append) : 参数2为追加写入的开关
+
+                  2. public FileOutputStream(File file) : 输出流关联文件, 文件路径以File对象形式给出
+                     public FileOutputStream(File file, boolean append) : 参数2为追加写入的开关
+
+          成员方法:
+                  public void write(int i) : 写出一个字节
+                  public void write(byte[] b) : 写出一个字节数组
+                  public void write(byte[] b, int off, int len) : 写出字节数组的一部分
+
+          细节:
+                  输出流关联文件, 文件如果不存在: 会自动创建出来
+                                  如果文件存在: 会清空现有的内容, 然后再进行写入操作
+   */
+```
+> 记得`.close()`关闭流,不然资源无法释放
+
+**FileOutputStream异常代码处理:**
+```java
+    /*
+        IO流的异常处理方式: jdk7版本开始
+
+        try
+            (需要调用close方法的流对象)
+            {
+                IO流逻辑代码
+            }
+        catch (异常类名 对象名) {
+            异常处理方案
+        }
+
+        ()中的流对象, 会自动调用close方法, 就算有异常, 也会调用close.
+     */
+```
+**FileInputStream(输入流):**
+```java
+    /*
+        FileInputStream 字节输入流读取数据
+
+        1. 构造方法:
+
+            FileInputStream(String name)    输入流关联文件, 文件路径以字符串形式给出
+            FileInputStream(File file)      输入流关联文件, 文件路径以File对象形式给出
+
+        2. 成员方法:
+
+            public int read()               读取单个字节
+            public int read(byte[] bys)     读取一个字节数组
+                                                - 将读取到的字节, 存入数组容器, 返回读取到的有效字节个数
+
+     */
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream("E:\\A.txt");
+
+        byte[] bys = new byte[2];
+
+        // 将读取到的字节, 存入数组容器, 返回读取到的有效字节个数
+        int len;
+        while( (len = fis.read(bys)) != -1) {
+            String s = new String(bys, 0, len);
+            System.out.print(s);
+        }
+
+        fis.close();
+
+    }
+
+    private static void method1() throws IOException {
+        FileInputStream fis = new FileInputStream("E:\\A.txt");
+
+        int i;
+        while( (i = fis.read()) != -1 ){
+            System.out.print((char)i);
+        }
+
+        fis.close();
+    }
+```
+> 如果读取不到(也就是读完了)会返回 -1
+
+**字符流:**
+**FileReader(字符流读取):**
+```java
+    /*
+    FileReader: 用于读取纯文本文件，解决中文乱码问题
+
+        构造方法:
+                1. public FileReader(String fileName) 字符输入流关联文件，路径以字符串形式给出
+                2. public FileReader(File file) 字符输入流关联文件，路径以File对象形式给出
+
+        成员方法:
+                public int read() : 读取单个字符
+                public int read(char[] cbuf) : 读取一个字符数组, 返回读取到的有效字符个数
+ */
+```
+**FileWriter(字符流输出):**
+```java
+    /*
+        FileWriter字符输出流写出数据 :
+
+        构造方法:
+                FileWriter(String fileName):                         字符输出流关联文件，路径以字符串形式给出
+                FileWriter(String fileName, boolean append):         参数2: 追加写入的开关
+                FileWriter(File file):                               字符输出流关联文件，路径以File对象形式给出
+                FileWriter(File file, boolean append):               参数2: 追加写入的开关
+
+        成员方法:
+                public void write(int c)                             写出单个字符
+                public void write(char[] cbuf)                       写出一个字符数组
+                public void write(char[] cbuf, int off, int len)     写出字符数组的一部分
+                public void write(String str)                        写出字符串
+                public void write(String str, int off, int len)      写出字符串的一部分
+     */
+```
+**FileWriter需要刷出数据(类似于一个缓冲区，需要刷一下):**
+```java
+    /*
+        注意事项: 字符输出流写出数据, 需要调用flush或close方法, 数据才会写出
+
+            flush() : 刷出数据, 刷出后可以继续写出
+            close() : 关闭流释放资源, 顺便刷出数据, 关闭后不可以继续写出
+     */
+```
+> **字节流使用场景:不是纯文本文件都用字节流**
+> 
+> **字符流使用场景:读写纯文本文件**
+
+**Properties集合和方法:**
+**集合:**
+```java
+    /*
+        Properties作为集合的使用
+
+            Object setProperty (String key, String value) : 类似Map集合的put方法
+            String getProperty (String key) : 类似Map集合的get方法
+            Set<String> stringPropertyNames() : 类似Map是集合的keySet方法
+     */
+```
+**方法（类）:**
+```java
+    /*
+        Properties 和 IO 有关的方法
+
+            void load(InputStream inStream)     从输入字节流读取属性列表（键和元素对）
+            void load(Reader reader)            从输入字符流读取属性列表（键和元素对）
+            void store(OutputStream out, String comments)   将集合的键值对写出到文件(字节流)
+            void store(Writer writer, String comments)      将集合的键值对写出到文件(字符流)
+     */
+```
+> `Properties`最常见用途就是:存配置
+> 
+> 比如:数据库连接信息、项目环境配置、系统参数
+```Properties
+username=root
+password=123456
+url=jdbc://mysql://localhost:3306/test
+```
+**Hutool工具(提升开发效率):**
+> 帮你把Java开发中常见的"重复、繁琐操作"封装好，让你少写很多代码
+> 
+> `.jar`文件就是一个压缩包,里面压缩的字节码文件,也就是`.class`文件
+```java
+    /*
+        IOUtil常用方法
+            copy(InputStream in, OutputStream out, int bufferSize)      字节流拷贝
+            copy(Reader reader, Writer writer)                          字符流拷贝
+            readLines(Reader reader, Collection<String> collection)     按行读取内容到集合
+            close(Closeable closeables)                                 安全关闭流
+
+        FileUtil常用方法
+            touch(filePath)                                             创建文件（自动创建父目录）
+            mkdir(dirPath)                                              创建目录（支持多级目录）
+            copy(srcPath, destPath, isOverride)                         复制文件或目录（可选覆盖）
+            move(srcFile, destDir, isOverride)                          移动文件或目录
+     */
+```
+**进程:(正在运行的程序)**
+> 程序：一份静态的代码（比如一个软件安装包） 
+> 
+>进程：这段代码被运行起来之后的“活动状态
+> 
+> **进程 = 程序 + 运行环境 + 当前状态**
+
+**进程的特性:**
+> **动态性：** 进程是“正在运行”的
+> 
+> **独立性：** 每个进程有自己的内存空间
+> 
+> **并发性：** 多个进程可以同时运行（看起来同时）
+> 
+> **生命周期：** 创建 → 运行 → 结束
+> 
+> **进程和线程的对比:** 进程 = 一家公司,线程 = 公司里的员工
+> 
+> **进程里面可以同时执行多个任务,每个任务就是线程**
+
+**并行与并发的比较:**
+> **并发**:单核运行，看起来"同时在做",但可能是**交替执行**.并发不一定同时，不需要多核
+>
+> **并行**:多核运行,真正"同时在做",是**物理上的同时执行**.并行需要同时，需要多核
+
+**Java开启线程的方式:**
+- 继承Thread类(不推荐),扩展性不好，不能多继承
+- 实现Runnable接口(推荐),扩展性好，它可以多继承，因为它是一个接口
+- 实现Callable接口,如果线程任务需要有返回值，可以用Callable接口
+
+**线程相关方法:**
+```java
+    /*
+        线程设置名字和获取名字
+
+        Thread类的方法:
+
+            public String getName() : 获取线程名字
+            public void setName() : 设置线程名字
+            public static Thread currentThread() : 获取当前线程的对象
+
+     */
+```
+```java
+    /*
+        休眠线程的方法
+
+        public static void sleep(long time) : 让线程休眠指定的时间，单位为毫秒
+     */
+```
+```java
+    /*
+        线程优先级的方法:
+
+            public setPriority(int newPriority) : 设置线程优先级
+            public final int getPriority() : 获取线程优先级
+     */
+```
+```java
+    /*
+        public final void setDaemon(boolean on) : 设置为守护线程
+     */
+```
+**同步代码块`synchronized`:**
+- 锁对象可以是任意对象,但是需要保证多条线程的锁对象,是同一把锁
+- 同步可以解决多线程的数据安全问题,但是也会降低程序的运行效率
+
+**同步方法:**
+- 在方法的返回值类型前面加入`synchronized`关键字
+- 方法分为静态和非静态
+- 静态方法的锁对象是字节码对象,非静态方法的锁对象是this
+
+**lock锁:**
+```java
+Lock lock = new ReentrantLock();
+
+lock.lock();   // 加锁
+try {
+    // 业务代码（临界区）
+} finally {
+    lock.unlock(); // 解锁（一定要写）
+}
+```
+**线程池:**
+
+**作用:**
+
+1. **线程复用**
+
+不用每次都 new Thread
+
+2. **控制线程数量**
+
+避免系统崩溃（比如最多 10 个线程）
+
+3. **任务排队**
+
+线程忙不过来时，任务先排队
+```java
+import java.util.concurrent.*;
+
+public class TestPool {
+
+    public static void main(String[] args) {
+
+        ExecutorService pool = new ThreadPoolExecutor(
+                2,                      // 核心线程数
+                4,                      // 最大线程数
+                60, TimeUnit.SECONDS,   // 空闲存活时间
+                new LinkedBlockingQueue<>(10) // 任务队列
+        );
+
+        pool.execute(() -> {
+            System.out.println("任务1：" + Thread.currentThread().getName());
+        });
+
+        pool.shutdown();
+    }
+}
+```
+
+**线程池的工作原理:**
+- 线程数 < corePoolSize → 直接创建线程
+- 线程满了 → 放入队列
+- 队列满了 → 创建新线程（最多到 maxPoolSize）
+- 再满 → 执行拒绝策略
+
+**自定义线程池:**
+```java
+import java.util.concurrent.*;
+
+public class CustomThreadPool {
+
+    public static void main(String[] args) {
+
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(
+                2, // 核心线程数
+                4, // 最大线程数
+                60, // 空闲线程存活时间
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(10), // 有界队列（重点）
+                Executors.defaultThreadFactory(), // 线程工厂
+                new ThreadPoolExecutor.AbortPolicy() // 拒绝策略
+        );
+
+        for (int i = 0; i < 5; i++) {
+            int task = i;
+            pool.execute(() -> {
+                System.out.println(Thread.currentThread().getName()
+                        + " 执行任务：" + task);
+            });
+        }
+
+        pool.shutdown();
+    }
+}
+```
+**七大参数:**
+```java
+import java.util.concurrent.*;
+
+/**
+ * 自定义线程池示例
+ */
+public class CustomThreadPoolDemo {
+
+    public static void main(String[] args) {
+
+        /**
+         * ThreadPoolExecutor 七大参数详解：
+         */
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+
+                /**
+                 * 1. corePoolSize（核心线程数）
+                 * -------------------------------------------------
+                 * 👉 线程池中“长期存活”的线程数量
+                 * 👉 即使空闲也不会被销毁（默认情况）
+                 * 👉 这些线程优先处理任务
+                 *
+                 * 类比：公司正式员工数量
+                 */
+                2,
+
+                /**
+                 * 2. maximumPoolSize（最大线程数）
+                 * -------------------------------------------------
+                 * 👉 线程池允许创建的最大线程数量
+                 * 👉 当核心线程 + 队列都满了，才会扩展线程
+                 *
+                 * 类比：正式员工 + 临时工总人数上限
+                 */
+                4,
+
+                /**
+                 * 3. keepAliveTime（空闲存活时间）
+                 * -------------------------------------------------
+                 * 👉 非核心线程空闲多久会被回收
+                 * 👉 超过这个时间没有任务就销毁线程
+                 *
+                 * 类比：临时工多久没活就解雇
+                 */
+                60,
+
+                /**
+                 * 4. unit（时间单位）
+                 * -------------------------------------------------
+                 * 👉 keepAliveTime 的时间单位
+                 */
+                TimeUnit.SECONDS,
+
+                /**
+                 * 5. workQueue（任务队列）⭐重点
+                 * -------------------------------------------------
+                 * 👉 存放等待执行任务的队列
+                 * 👉 当核心线程满了，任务先进入这里排队
+                 *
+                 * ⚠ 推荐使用“有界队列”，防止内存爆炸
+                 *
+                 * 类比：任务排队大厅
+                 */
+                new ArrayBlockingQueue<>(3),
+
+                /**
+                 * 6. threadFactory（线程工厂）
+                 * -------------------------------------------------
+                 * 👉 用来创建线程（可以自定义线程名）
+                 * 👉 方便排查日志和问题
+                 *
+                 * 类比：给员工起名字的HR
+                 */
+                new ThreadFactory() {
+                    private int count = 1;
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, "my-thread-" + count++);
+                    }
+                },
+
+                /**
+                 * 7. handler（拒绝策略）⭐重点
+                 * -------------------------------------------------
+                 * 👉 当线程池和队列都满了之后如何处理新任务
+                 *
+                 * 常见策略：
+                 * - AbortPolicy：直接抛异常（默认）
+                 * - CallerRunsPolicy：让提交任务的线程自己执行
+                 * - DiscardPolicy：直接丢弃任务
+                 * - DiscardOldestPolicy：丢弃最早任务
+                 */
+                new ThreadPoolExecutor.AbortPolicy()
+        );
+
+        /**
+         * 提交任务测试
+         */
+        for (int i = 1; i <= 10; i++) {
+            int taskId = i;
+
+            executor.execute(() -> {
+                System.out.println(Thread.currentThread().getName()
+                        + " 执行任务：" + taskId);
+
+                try {
+                    Thread.sleep(1000); // 模拟任务执行
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        /**
+         * 关闭线程池（不是立刻停止，会等任务执行完）
+         */
+        executor.shutdown();
+    }
+}
+```

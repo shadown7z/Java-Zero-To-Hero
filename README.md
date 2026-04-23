@@ -1369,3 +1369,365 @@ public class CustomThreadPoolDemo {
     }
 }
 ```
+**2026年4月23日:**
+
+**UDP:无连接协议**
+> 不管连没连接成功，常用于在线视频，传输快，但是数据不安全易丢失，1次64kb
+
+**TCP:连接协议**
+> 需要确保连接成功，例如:下载软件,传输慢，但是数据安全
+>
+> 三次握手,四次挥手
+
+**三次握手:"1.在吗？ 2.在的。 3.OK。"**
+> 1和3为客户端,2为服务端
+
+**四次挥手:"1.在吗？ 2.在的。 3.断了。 4.OK。"**
+> 1和3为客户端,2和4为服务端
+
+**TCP代码演示:**
+
+**服务端:**
+```java
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * TCP服务端示例
+ */
+public class TCPServer {
+
+    public static void main(String[] args) throws Exception {
+
+        /**
+         * 1. 创建 ServerSocket
+         * --------------------------------------------------
+         * 👉 作用：监听客户端连接
+         * 👉 参数：端口号（必须和客户端一致）
+         *
+         * 类比：开一个“服务窗口”等待客户来连接
+         */
+        ServerSocket serverSocket = new ServerSocket(8888);
+
+        System.out.println("服务端启动，等待连接...");
+
+        /**
+         * 2. accept() 阻塞等待客户端连接
+         * --------------------------------------------------
+         * 👉 没有客户端连接时会一直阻塞
+         * 👉 一旦有客户端连接，就返回一个 Socket 对象
+         *
+         * 类比：有人打电话进来了
+         */
+        Socket socket = serverSocket.accept();
+
+        System.out.println("客户端已连接");
+
+        /**
+         * 3. 获取输入流（读取客户端发来的数据）
+         * --------------------------------------------------
+         * 👉 TCP 是基于流的通信
+         */
+        InputStream is = socket.getInputStream();
+
+        byte[] buffer = new byte[1024];
+        int len = is.read(buffer);
+
+        System.out.println("收到消息：" + new String(buffer, 0, len));
+
+        /**
+         * 4. 关闭资源
+         */
+        socket.close();
+        serverSocket.close();
+    }
+}
+```
+**客户端:**
+```java
+import java.io.OutputStream;
+import java.net.Socket;
+
+/**
+ * TCP客户端示例
+ */
+public class TCPClient {
+
+    public static void main(String[] args) throws Exception {
+
+        /**
+         * 1. 创建 Socket
+         * --------------------------------------------------
+         * 👉 需要指定服务器IP + 端口
+         *
+         * 类比：拨打电话
+         */
+        Socket socket = new Socket("127.0.0.1", 8888);
+
+        /**
+         * 2. 获取输出流（向服务端发送数据）
+         */
+        OutputStream os = socket.getOutputStream();
+
+        os.write("你好，我是客户端".getBytes());
+
+        /**
+         * 3. 关闭资源
+         */
+        socket.close();
+    }
+}
+```
+
+**UDP的代码演示:**
+
+**接收端:**
+```java
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+/**
+ * UDP接收端
+ */
+public class UDPReceiver {
+
+    public static void main(String[] args) throws Exception {
+
+        /**
+         * 1. 创建 DatagramSocket
+         * --------------------------------------------------
+         * 👉 绑定端口，监听数据
+         *
+         * 类比：开一个“收件箱”
+         */
+        DatagramSocket socket = new DatagramSocket(9999);
+
+        /**
+         * 2. 创建数据包用于接收数据
+         */
+        byte[] buffer = new byte[1024];
+
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+        System.out.println("等待接收数据...");
+
+        /**
+         * 3. 接收数据（阻塞）
+         */
+        socket.receive(packet);
+
+        /**
+         * 4. 解析数据
+         */
+        String msg = new String(packet.getData(), 0, packet.getLength());
+
+        System.out.println("收到消息：" + msg);
+
+        socket.close();
+    }
+}
+```
+**发送端:**
+```java
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+/**
+ * UDP发送端
+ */
+public class UDPSender {
+
+    public static void main(String[] args) throws Exception {
+
+        /**
+         * 1. 创建 DatagramSocket
+         * --------------------------------------------------
+         * 👉 不需要指定端口（系统随机分配）
+         *
+         * 类比：准备寄信
+         */
+        DatagramSocket socket = new DatagramSocket();
+
+        /**
+         * 2. 准备数据
+         */
+        byte[] data = "你好，我是UDP发送端".getBytes();
+
+        /**
+         * 3. 创建数据包
+         * --------------------------------------------------
+         * 👉 需要指定：
+         * - 数据
+         * - 接收方IP
+         * - 接收方端口
+         */
+        DatagramPacket packet = new DatagramPacket(
+                data,
+                data.length,
+                InetAddress.getByName("127.0.0.1"),
+                9999
+        );
+
+        /**
+         * 4. 发送数据
+         */
+        socket.send(packet);
+
+        socket.close();
+    }
+}
+```
+
+**枚举:一组固定、有限、不会改变的常量集合**
+- 一周只有：周一 ~ 周日
+- 状态只有：成功 / 失败 / 处理中
+- 性别只有：男 / 女
+
+**枚举基本定义:**
+```java
+enum Status {
+    SUCCESS,
+    FAIL,
+    PROCESSING
+}
+```
+
+**枚举的使用方式:**
+```java
+public class TestEnum {
+    public static void main(String[] args) {
+
+        Status status = Status.SUCCESS;
+
+        System.out.println(status); // 输出：SUCCESS
+    }
+}
+```
+**带属性的枚举:**
+```java
+enum Status {
+
+    SUCCESS(200, "成功"),
+    FAIL(500, "失败");
+
+    private int code;
+    private String msg;
+
+    // 构造器（默认 private）
+    Status(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+}
+```
+**使用:**
+```java
+System.out.println(Status.SUCCESS.getCode()); // 200
+```
+**常用方法:**
+```java
+Status.SUCCESS.name();    // "SUCCESS"
+Status.SUCCESS.ordinal(); // 下标（从0开始）
+Status.valueOf("SUCCESS"); // 转换
+```
+
+**反射:就是加载器，在程序运行时，动态获取类的信息，并操作这个类**
+```java
+import java.lang.reflect.*;
+
+class User {
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return "User{name='" + name + "'}";
+    }
+}
+
+public class TestReflection {
+    public static void main(String[] args) throws Exception {
+
+        // 1. 获取 Class 对象
+        Class<?> clazz = Class.forName("User");
+
+        // 2. 创建对象
+        Object obj = clazz.getDeclaredConstructor().newInstance();
+
+        // 3. 获取方法
+        Method method = clazz.getDeclaredMethod("setName", String.class);
+
+        // 4. 调用方法
+        method.invoke(obj, "张三");
+
+        // 5. 输出
+        System.out.println(obj);
+    }
+}
+```
+
+**注解:给代码加标签，让程序在运行或编译时做特殊处理**
+> 本质是接口.
+```java
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME) // 运行时可用
+@Target(ElementType.METHOD)         // 作用在方法上
+public @interface MyAnnotation {
+    String value();
+}
+```
+**使用注解:**
+```java
+public class Test {
+
+    @MyAnnotation("测试方法")
+    public void testMethod() {
+        System.out.println("执行方法");
+    }
+}
+```
+**用反射读取注解:**
+```java
+import java.lang.reflect.Method;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+
+        Class<?> clazz = Test.class;
+
+        Method method = clazz.getMethod("testMethod");
+
+        if (method.isAnnotationPresent(MyAnnotation.class)) {
+            MyAnnotation ann = method.getAnnotation(MyAnnotation.class);
+            System.out.println(ann.value());
+        }
+    }
+}
+```
+**元注解:用来“修饰注解的注解”**
+> 给注解加注解
+```java
+import java.lang.annotation.*;
+
+/**
+ * 自定义注解
+ */
+@Retention(RetentionPolicy.RUNTIME) // 运行时有效（可以反射读取）
+@Target(ElementType.METHOD)         // 只能用在方法上
+public @interface MyAnnotation {
+    String value();
+}
+```

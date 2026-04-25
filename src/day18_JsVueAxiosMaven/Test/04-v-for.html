@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>员工列表 v-for 练习</title>
+
+    <!-- 引入 Vue3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        table {
+            width: 600px;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .form-box {
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 5px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <h2>员工管理系统（v-for练习）</h2>
+
+    <!-- 🔥 添加员工表单 -->
+    <div class="form-box">
+        <!-- v-model 双向绑定 -->
+        <input v-model="name" placeholder="姓名">
+        <input v-model.number="age" placeholder="年龄">
+        <input v-model="job" placeholder="职位">
+
+        <!-- 点击添加员工 -->
+        <button @click="addEmployee">添加员工</button>
+    </div>
+
+    <!-- 🔥 员工表格 -->
+    <table>
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>职位</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <!-- v-for：循环员工列表 -->
+            <tr v-for="(emp, index) in employees" :key="emp.id">
+
+                <!-- 序号 -->
+                <td>{{ index + 1 }}</td>
+
+                <!-- 姓名 -->
+                <td>{{ emp.name }}</td>
+
+                <!-- 年龄 -->
+                <td>{{ emp.age }}</td>
+
+                <!-- 职位 -->
+                <td>{{ emp.job }}</td>
+
+                <!-- 删除按钮 -->
+                <td>
+                    <button @click="deleteEmployee(index)">删除</button>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            // 🔥 表单数据（用于新增员工）
+            name: "",
+            age: "",
+            job: "",
+
+            // 🔥 员工列表（v-for核心数据）
+            employees: [
+                { id: 1, name: "张三", age: 20, job: "Java开发" },
+                { id: 2, name: "李四", age: 22, job: "前端开发" },
+                { id: 3, name: "王五", age: 25, job: "测试工程师" }
+            ]
+        }
+    },
+
+    methods: {
+
+        // ➕ 添加员工
+        addEmployee() {
+            // 简单校验
+            if (!this.name || !this.age || !this.job) {
+                alert("请填写完整信息");
+                return;
+            }
+
+            // 添加新员工
+            this.employees.push({
+                id: Date.now(), // 用时间戳做唯一id
+                name: this.name,
+                age: this.age,
+                job: this.job
+            });
+
+            // 清空输入框
+            this.name = "";
+            this.age = "";
+            this.job = "";
+        },
+
+        // ❌ 删除员工
+        deleteEmployee(index) {
+            this.employees.splice(index, 1);
+        }
+    }
+}).mount("#app");
+</script>
+
+</body>
+</html>

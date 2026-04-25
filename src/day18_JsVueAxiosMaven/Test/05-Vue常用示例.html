@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vue常用指令示例</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+<div id="app">
+
+    <!-- 1️⃣ v-model：双向绑定 -->
+    <input v-model="username" placeholder="请输入用户名">
+    <p>用户名：{{ username }}</p>
+
+    <hr>
+
+    <!-- 2️⃣ v-bind（简写 : ）：绑定属性 -->
+    <img :src="imgUrl" width="120">
+    <p :title="tip">鼠标悬停看提示</p>
+
+    <hr>
+
+    <!-- 3️⃣ v-if / v-else：条件渲染 -->
+    <button @click="show = !show">切换显示</button>
+
+    <p v-if="show">✔ 现在你能看到我（v-if）</p>
+    <p v-else>❌ 我被隐藏了</p>
+
+    <hr>
+
+    <!-- 4️⃣ v-show：控制显示（只是 display:none） -->
+    <p v-show="show">我是 v-show 控制的</p>
+
+    <hr>
+
+    <!-- 5️⃣ v-for：列表渲染 -->
+    <ul>
+        <li v-for="(item, index) in list" :key="index">
+            {{ index }} - {{ item }}
+        </li>
+    </ul>
+
+    <hr>
+
+    <!-- 6️⃣ v-on（@）：事件绑定 -->
+    <button @click="addItem">添加元素</button>
+
+    <hr>
+
+    <!-- 7️⃣ v-html：解析HTML -->
+    <p v-html="htmlContent"></p>
+
+    <hr>
+
+    <!-- 8️⃣ v-text：纯文本 -->
+    <p v-text="textContent"></p>
+
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            // v-model 双向绑定
+            username: "",
+
+            // v-bind
+            imgUrl: "https://vuejs.org/images/logo.png",
+            tip: "这是 Vue Logo",
+
+            // v-if / v-show
+            show: true,
+
+            // v-for
+            list: ["Java", "Vue", "SpringBoot"],
+
+            // v-html
+            htmlContent: "<b style='color:red'>这是红色加粗HTML</b>",
+
+            // v-text
+            textContent: "这是纯文本内容"
+        }
+    },
+
+    methods: {
+        // v-on 事件方法
+        addItem() {
+            this.list.push("新技能 " + (this.list.length + 1));
+            console.log("添加了一个元素");
+        }
+    }
+}).mount("#app");
+</script>
+
+</body>
+</html>

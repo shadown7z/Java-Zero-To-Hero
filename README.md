@@ -1732,3 +1732,1497 @@ public @interface MyAnnotation {
 }
 ```
 
+**JS部分:**
+
+**`alert`弹窗:**
+```js
+alert("Hello JAVA")
+```
+**let变量，const常量:**
+```js
+alert("Hello JAVA");
+// let是变量
+let age = 18;
+
+// const是常量
+const name = "Java";
+```
+
+**数据类型**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS-数据类型</title>
+</head>
+<body>
+  
+
+  <script>
+    //1. 数据类型
+    // alert(typeof 10); //number
+    // alert(typeof 1.5); //number
+    
+    // alert(typeof true); //boolean
+    // alert(typeof false); //boolean
+
+    // alert(typeof "Hello"); //string
+    // alert(typeof 'JS'); //string
+    // alert(typeof `JavaScript`); //string
+
+    // alert(typeof null); //null ? -> object
+
+    // let a ;
+    // alert(typeof a); //undefined
+
+    //2. 模板字符串 - 简化字符串拼接
+    let name = 'Tom';
+    let age = 18;
+
+    console.log('我是'+name+', 我今年'+age+'岁');
+    console.log(`我是${name}, 我今年${age}岁`);
+    
+    
+  </script>
+</body>
+</html>
+```
+> **反引号的字符串拼接**类似于Python经典的`${变量名}`
+
+**foreach:**
+```js
+let arr = [1, 2, 3];
+
+arr.forEach(item => {
+    console.log(item);
+});
+```
+**函数:**
+```js
+    //普通函数
+    function add(a,b){
+      return a+b;
+    }
+    console.log(add(10,20));
+    //箭头函数
+    const add2 = (a,b) => a+b;
+    console.log(add2(30,40));
+```
+**对象(Java中的方法)**
+```js
+    //对象
+    let user = {
+      name:"Tom",
+      age:18,
+      sayHello:function(){
+        console.log(`Hello,我是${this.name},我今年${this.age}岁`);
+      }
+    }
+    user.sayHello();
+```
+
+**数组:**
+```js
+    //数组
+    let arr = [1,2,3,4,5];
+    //取值
+    console.log(arr[0]); // 1
+    //遍历
+    for(let i=0;i<arr.length;i++){
+      console.log(arr[i]);
+    }
+    //其他遍历方法,直接打印数组
+    console.log(arr)
+    //常用方法
+    arr.push(6); //添加元素
+    arr.pop(); //删除最后一个元素
+```
+**Json:**
+```js
+    // JSON
+    let jsonStr = '{"name":"Tom","age":18}';
+    let jsonObj = JSON.parse(jsonStr); //字符串转对象
+    console.log(jsonObj.name); // Tom
+    console.log(jsonObj.age); // 18
+```
+**DOM(Document Object Model)文档对象模型**
+```js
+    let h1 = document.querySelector('h1');
+h1.innerHTML = '这是修改后的标题';
+```
+
+**事件监听:让程序“等待某个行为发生，然后自动执行代码”**
+> 类似于一段待被激活的代码
+
+**语法:**
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS-引入方式</title>
+</head>
+<body>
+    <input type="button" id="bt1" value="点击我" />
+    <script>
+        document.querySelector('#bt1').addEventListener('click',()=>{
+        alert('按钮被点击了');
+    })
+    </script>
+</body>
+</html>
+```
+
+**常见事件:**
+- mouseenter(鼠标进入)
+- mouseleave(鼠标离开)
+- keydown（键盘按下）
+- keyup(键盘抬起)
+- focus（聚焦）
+- blur（失焦）
+- click（点击）
+- input（输入）
+- submit(表单提交时)
+- change（变化）
+- scroll（滚动）
+- load（加载完成）
+
+**常见事件练习案例:**
+
+**html页面代码:**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS-引入方式</title>
+</head>
+<body>
+    <form action="" style="text-align: center;">
+        <input type="text" name="username" id="username">
+        <input type="text" name="age" id="age">
+        <input id="b1" type="submit" value="提交">
+        <input id="b2" type="button" value="单击事件">
+    </form>
+
+    <br><br><br>
+
+    <table width="800px" border="1" cellspacing="0" align="center">
+        <tr>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>分数</th>
+            <th>评语</th>
+        </tr>
+        <tr align="center">
+            <td>001</td>
+            <td>张三</td>
+            <td>90</td>
+            <td>很优秀</td>
+        </tr>
+        <tr align="center" id="last">
+            <td>002</td>
+            <td>李四</td>
+            <td>92</td>
+            <td>优秀</td>
+        </tr>
+    </table>
+  <script type="module" src="JS/evento.js">
+  </script>
+
+</body>
+</html>
+```
+**引入的JS资源:**
+```js
+import { printLog } from './utiles.js';
+
+
+document.querySelector('#b2').addEventListener('click', () => {
+    printLog("我被点击了...");
+})
+
+document.querySelector('#last').addEventListener('mouseenter', () => {
+    printLog("鼠标移入了...");
+})
+
+document.querySelector('#last').addEventListener('mouseleave', () => {
+    printLog("鼠标移出了...");
+})      
+
+document.querySelector('#username').addEventListener('keydown', () => { 
+    printLog("键盘被按下了...");
+})  
+
+document.querySelector('#username').addEventListener('keyup', () => {
+    printLog("键盘被抬起了...");
+}
+)
+document.querySelector('#age').addEventListener('blur', () => {
+    printLog("失去焦点...");
+})          
+document.querySelector('#age').addEventListener('focus', () => {    
+
+    printLog("获得焦点...");
+})
+
+document.querySelector('#age').addEventListener('input', () => {
+    printLog("用户输入时触发...");
+})                  
+document.querySelector('form').addEventListener('submit', () => {
+    alert("表单被提交了...");
+}       )
+```
+**JS资源所引入的工具类:**
+```js
+export function printLog(msg){
+    console.log(msg);
+}
+```
+
+**Vue快速入门:**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue-快速入门</title>
+</head>
+<body>
+  <div id="app">
+    <h1>{{message}}</h1>
+    <h1>{{count}}</h1> 
+  </div>
+  <script type="module">  
+  import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+  createApp({
+    data(){
+      return{
+        message : 'Hello Vue',
+        count : 100
+      }
+    }
+  }).mount('#app');
+  </script>
+</body>
+</html>
+```
+
+**Vue常用命令:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vue常用指令示例</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+<div id="app">
+
+    <!-- 1️⃣ v-model：双向绑定 -->
+    <input v-model="username" placeholder="请输入用户名">
+    <p>用户名：{{ username }}</p>
+
+    <hr>
+
+    <!-- 2️⃣ v-bind（简写 : ）：绑定属性 -->
+    <img :src="imgUrl" width="120">
+    <p :title="tip">鼠标悬停看提示</p>
+
+    <hr>
+
+    <!-- 3️⃣ v-if / v-else：条件渲染 -->
+    <button @click="show = !show">切换显示</button>
+
+    <p v-if="show">✔ 现在你能看到我（v-if）</p>
+    <p v-else>❌ 我被隐藏了</p>
+
+    <hr>
+
+    <!-- 4️⃣ v-show：控制显示（只是 display:none） -->
+    <p v-show="show">我是 v-show 控制的</p>
+
+    <hr>
+
+    <!-- 5️⃣ v-for：列表渲染 -->
+    <ul>
+        <li v-for="(item, index) in list" :key="index">
+            {{ index }} - {{ item }}
+        </li>
+    </ul>
+
+    <hr>
+
+    <!-- 6️⃣ v-on（@）：事件绑定 -->
+    <button @click="addItem">添加元素</button>
+
+    <hr>
+
+    <!-- 7️⃣ v-html：解析HTML -->
+    <p v-html="htmlContent"></p>
+
+    <hr>
+
+    <!-- 8️⃣ v-text：纯文本 -->
+    <p v-text="textContent"></p>
+
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            // v-model 双向绑定
+            username: "",
+
+            // v-bind
+            imgUrl: "https://vuejs.org/images/logo.png",
+            tip: "这是 Vue Logo",
+
+            // v-if / v-show
+            show: true,
+
+            // v-for
+            list: ["Java", "Vue", "SpringBoot"],
+
+            // v-html
+            htmlContent: "<b style='color:red'>这是红色加粗HTML</b>",
+
+            // v-text
+            textContent: "这是纯文本内容"
+        }
+    },
+
+    methods: {
+        // v-on 事件方法
+        addItem() {
+            this.list.push("新技能 " + (this.list.length + 1));
+            console.log("添加了一个元素");
+        }
+    }
+}).mount("#app");
+</script>
+
+</body>
+</html>
+```
+**v-for:列表渲染**
+> `<tr v-for="(item,index) in items" :key="item.id">{{item}}</tr>`
+>
+>省略写法:`v-for="item in item"`
+>
+> 推荐在后面加`key="item.id"`，提升性能
+
+**v-bind和v-model:**
+- `v-bind`:数据变页面变，页面变数据不变
+- `v-model`:数据变页面变，页面变数据变
+- 插值表达式`{{xx}}`只能渲染数据,不能在标签内部渲染属性，渲染属性需要使用`v-bind`
+
+**v-if:控制元素的显示与隐藏(一次性显示内容、登录状态、权限控制):**
+```html
+                    <td>
+                        <span v-if="e.job == 1">班主任</span>
+                        <span v-else-if="e.job == 2">讲师</span>
+                        <span v-else-if="e.job == 3">学工主管</span>
+                        <span v-else-if="e.job == 4">教研主管</span>
+                        <span v-else-if="e.job == 5">咨询师</span>
+                        <span v-else>其他</span>
+                    </td>
+```
+- 如果页面不需要频繁的去渲染，那就v-if
+
+**v-show:控制元素的显示与隐藏(菜单显示隐藏、Tab切换):**
+```html
+                    <!-- v-show: 控制元素的显示与隐藏 -->
+                    <td>
+                        <span v-show="e.job == 1">班主任</span>
+                        <span v-show="e.job == 2">讲师</span>
+                        <span v-show="e.job == 3">学工主管</span>
+                        <span v-show="e.job == 4">教研主管</span>
+                        <span v-show="e.job == 5">咨询师</span>
+                    </td>
+```
+
+```html
+v-if  = 控制“是否存在”（销毁/创建）
+v-show = 控制“是否显示”（隐藏/显示）
+
+少切换用 v-if
+多切换用 v-show
+```
+
+**v-model:双向绑定**
+
+**v-on:事件绑定**
+
+**Ajax(Asynchronous JavaScript And XML:异步的JavaScript和XML):是一种“在不刷新页面的情况下，向服务器请求数据”的技术。**
+- 是一种“在不刷新页面的情况下，向服务器请求数据”的技术。
+```js
+axios.get("/api/user")
+    .then(res => {
+        console.log(res.data);
+    });
+```
+> Ajax = 不刷新页面 + 异步请求数据 + 局部更新页面
+
+**Axios:对原生的Ajax进行了封装，简化书写，快速开发**
+
+**GET请求:**
+```js
+axios.get('/api/user')
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+```
+
+**POST请求:**
+```js
+axios.post('/api/login', {
+    username: 'admin',
+    password: '123456'
+})
+.then(res => {
+    console.log(res.data);
+});
+```
+
+**完整示例:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Axios 示例</title>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+
+    <h2>Axios 获取用户数据</h2>
+
+    <button @click="getUser">获取用户</button>
+
+    <hr>
+
+    <!-- 显示数据 -->
+    <p>用户名：{{ user.name }}</p>
+    <p>邮箱：{{ user.email }}</p>
+
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            user: {}
+        }
+    },
+
+    methods: {
+
+        // 🔥 Axios GET 请求
+        getUser() {
+
+            axios.get("https://jsonplaceholder.typicode.com/users/1")
+                .then(res => {
+
+                    // 把返回数据存入 Vue
+                    this.user = res.data;
+
+                    console.log("请求成功：", res.data);
+                })
+                .catch(err => {
+                    console.log("请求失败：", err);
+                });
+
+        }
+    }
+}).mount("#app");
+</script>
+
+</body>
+</html>
+```
+
+**Axios-请求方式别名:**
+> `axios.[请求方式](url [,data [, config]])`
+```js
+            axios.get("https://jsonplaceholder.typicode.com/users/1")
+                .then(res => {
+
+                    // 把返回数据存入 Vue
+                    this.user = res.data;
+
+                    console.log("请求成功：", res.data);
+                })
+                .catch(err => {
+                    console.log("请求失败：", err);
+                });
+```
+
+**Axios综合案例:**
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Tlias智能学习辅助系统</title>
+
+    <style>
+        /* ================== 导航栏样式 ================== */
+        .navbar {
+            background-color: #b5b3b3; /* 灰色背景 */
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 左右分布 */
+            padding: 10px; /* 内边距 */
+            align-items: center; /* 垂直居中 */
+        }
+
+        .navbar h1 {
+            margin: 0; /* 去掉默认外边距 */
+            font-weight: bold;
+            color: white;
+            font-family: "楷体"; /* 设置字体 */
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none; /* 去掉下划线 */
+        }
+
+        /* ================== 搜索表单 ================== */
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 控件之间间距 */
+            margin: 20px 0;
+        }
+
+        .search-form input,
+        .search-form select {
+            padding: 5px;
+            width: 260px;
+        }
+
+        .search-form button {
+            padding: 5px 15px;
+        }
+
+        /* ================== 表格 ================== */
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 合并边框 */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* ================== 页脚 ================== */
+        .footer {
+            background-color: #b5b3b3;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 30px;
+        }
+
+        #container {
+            width: 80%;
+            margin: 0 auto; /* 居中 */
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="container">
+
+    <!-- 🔥 顶部导航 -->
+    <div class="navbar">
+        <h1>Tlias智能学习辅助系统</h1>
+        <a href="#">退出登录</a>
+    </div>
+
+    <!-- 🔥 查询表单 -->
+    <form class="search-form">
+
+        <!-- v-model：双向绑定（输入框 → Vue数据） -->
+        <label>姓名：</label>
+        <input type="text" v-model="searchForm.name" placeholder="请输入姓名">
+
+        <label>性别：</label>
+        <select v-model="searchForm.gender">
+            <option value=""></option>
+            <option value="1">男</option>
+            <option value="2">女</option>
+        </select>
+
+        <label>职位：</label>
+        <select v-model="searchForm.job">
+            <option value=""></option>
+            <option value="1">班主任</option>
+            <option value="2">讲师</option>
+            <option value="3">学工主管</option>
+            <option value="4">教研主管</option>
+            <option value="5">咨询师</option>
+        </select>
+
+        <!-- v-on / @：事件绑定 -->
+        <button type="button" @click="search">查询</button>
+        <button type="button" @click="clear">清空</button>
+    </form>
+
+    <!-- 🔥 员工表格 -->
+    <table>
+
+        <!-- 表头 -->
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>头像</th>
+            <th>职位</th>
+            <th>入职日期</th>
+            <th>更新时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <!-- 表体 -->
+        <tbody>
+
+        <!-- v-for：循环渲染员工列表 -->
+        <tr v-for="(e, index) in empList" :key="e.id">
+
+            <!-- index + 1：序号 -->
+            <td>{{ index + 1 }}</td>
+
+            <!-- 插值表达式：显示数据 -->
+            <td>{{ e.name }}</td>
+
+            <!-- 三元表达式 -->
+            <td>{{ e.gender == 1 ? '男' : '女' }}</td>
+
+            <!-- v-bind：绑定图片地址 -->
+            <td>
+                <img class="avatar" :src="e.image" :alt="e.name">
+            </td>
+
+            <!-- v-if：条件渲染 -->
+            <td>
+                <span v-if="e.job == 1">班主任</span>
+                <span v-else-if="e.job == 2">讲师</span>
+                <span v-else-if="e.job == 3">学工主管</span>
+                <span v-else-if="e.job == 4">教研主管</span>
+                <span v-else-if="e.job == 5">咨询师</span>
+                <span v-else>其他</span>
+            </td>
+
+            <td>{{ e.entrydate }}</td>
+            <td>{{ e.updatetime }}</td>
+
+            <!-- 操作按钮 -->
+            <td>
+                <button type="button">编辑</button>
+                <button type="button">删除</button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>江苏传智播客教育科技股份有限公司</p>
+    </footer>
+
+</div>
+
+<!-- 引入 axios -->
+<script src="JS/axios.js"></script>
+
+<!-- Vue3 模块化写法 -->
+<script type="module">
+    import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+    createApp({
+
+        /* ================== 数据 ================== */
+        data() {
+            return {
+                // 查询条件（绑定表单）
+                searchForm: {
+                    name: '',
+                    gender: '',
+                    job: ''
+                },
+
+                // 员工列表数据（接口返回）
+                empList: []
+            }
+        },
+
+        /* ================== 方法 ================== */
+        methods: {
+
+            // 🔥 查询员工（核心）
+            async search() {
+
+                // axios 发送 GET 请求（带参数）
+                let result = await axios.get(
+                        `https://web-server.itheima.net/emps/list
+                ?name=${this.searchForm.name}
+                &gender=${this.searchForm.gender}
+                &job=${this.searchForm.job}`
+                );
+
+                // 把返回数据赋值给 empList（触发页面更新）
+                this.empList = result.data.data;
+            },
+
+            // 🔥 清空条件
+            clear() {
+                this.searchForm.name = '';
+                this.searchForm.gender = '';
+                this.searchForm.job = '';
+
+                // 重新查询
+                this.search();
+            }
+        },
+
+        /* ================== 生命周期钩子 ================== */
+        mounted() {
+            // 页面加载完成自动查询一次
+            this.search();
+        }
+
+    }).mount('#container')
+</script>
+
+</body>
+</html>
+```
+
+**钩子函数:在特定生命周期自动执行的函数**
+```html
+mounted(){
+    this.search();
+}
+```
+> mounted = 页面已经渲染完成 → 可以安全请求数据并更新页面
+
+**钩子方法(函数)案例:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Vue生命周期钩子演示</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <h2>{{ message }}</h2>
+
+    <button @click="change">修改数据</button>
+    <button @click="destroy">销毁组件</button>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+const app = createApp({
+
+    data() {
+        return {
+            message: "Hello Vue 生命周期"
+        }
+    },
+
+    // ================= 创建阶段 =================
+
+    beforeCreate() {
+        console.log("1️⃣ beforeCreate：数据还没初始化");
+    },
+
+    created() {
+        console.log("2️⃣ created：数据已初始化");
+    },
+
+    // ================= 挂载阶段 =================
+
+    beforeMount() {
+        console.log("3️⃣ beforeMount：即将渲染DOM");
+    },
+
+    mounted() {
+        console.log("4️⃣ mounted：页面已经渲染完成");
+
+        // 👉 最常用：发送请求
+        console.log("这里最适合发请求");
+    },
+
+    // ================= 更新阶段 =================
+
+    beforeUpdate() {
+        console.log("5️⃣ beforeUpdate：数据变了，DOM还没更新");
+    },
+
+    updated() {
+        console.log("6️⃣ updated：DOM已经更新");
+    },
+
+    // ================= 卸载阶段 =================
+
+    beforeUnmount() {
+        console.log("7️⃣ beforeUnmount：组件即将销毁");
+    },
+
+    unmounted() {
+        console.log("8️⃣ unmounted：组件已销毁");
+    },
+
+    methods: {
+        change() {
+            this.message = "数据被修改了";
+        },
+
+        destroy() {
+            // 手动卸载Vue应用
+            app.unmount();
+        }
+    }
+
+});
+
+app.mount("#app");
+</script>
+
+</body>
+</html>
+```
+
+**Maven:是一个 Java 项目管理和构建工具，用来管理依赖、编译、打包项目。**
+- 传统开发很痛苦:手动下载 jar 包,手动放到项目里,版本冲突难处理,编译、打包要自己写脚本
+- 有了Maven:自动下载依赖，自动管理版本，一键编译、打包、统一项目结构
+
+**Maven功能:**
+
+**1.依赖管理:只需要写配置,Maven自动帮你下载jar包**
+
+**2.项目构建:一条命令搞定,自动编译代码、运行测试、打成jar/war**
+```bash
+mvn package
+```
+
+**Maven常用命令:**
+```bash
+mvn clean       # 清理
+mvn compile     # 编译
+mvn test        # 测试
+mvn package     # 打包
+mvn install     # 安装到本地仓库
+```
+> Maven = 依赖管理 + 项目构建 + 标准化开发
+
+**IDEA里Maven的操作:**
+- 点开IDEA里的Maven,在Lifecycle里有编译`compile`，打包`package`等操作
+- 在Dependencies里是通过在pom.xml文件里写的所下载的jar包
+
+**Maven中pom.xml文件整体的结构:**
+```pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Maven 项目根标签 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+         <!-- XML 约束文件（校验 pom 结构） -->
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- 模型版本（固定写 4.0.0） -->
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- ================= 项目基本信息 ================= -->
+
+    <!-- 组织/公司标识（一般用包名反写） -->
+    <groupId>com.example</groupId>
+
+    <!-- 项目名称（唯一标识） -->
+    <artifactId>demo-project</artifactId>
+
+    <!-- 项目版本 -->
+    <version>1.0.0</version>
+
+    <!-- 打包方式：jar / war -->
+    <packaging>jar</packaging>
+
+
+    <!-- ================= 继承 SpringBoot 父工程 ================= -->
+    <!-- 可以帮你管理依赖版本（非常重要） -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.5</version>
+    </parent>
+
+
+    <!-- ================= 属性配置 ================= -->
+    <properties>
+        <!-- Java版本 -->
+        <java.version>1.8</java.version>
+
+        <!-- 编码格式 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <!-- ================= 依赖管理 ================= -->
+    <dependencies>
+
+        <!-- 🔥 Web开发依赖（最核心） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 🔥 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+
+            <!-- test 表示只在测试阶段使用 -->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 🔥 MySQL驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
+        <!-- 🔥 Lombok（简化代码） -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+
+            <!-- provided：编译时需要，运行时不需要 -->
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <!-- ================= 构建配置 ================= -->
+    <build>
+
+        <!-- 插件 -->
+        <plugins>
+
+            <!-- 🔥 SpringBoot 打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+
+                <!-- 可以打成可运行jar -->
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
+```
+> Maven的三类仓库:本地仓库、中央仓库(Maven团队)、远程仓库
+
+**Maven的安装太繁琐了就不写了,别忘了还有IDEA的配置**
+
+**Maven的坐标(写法类似于html的标签):用来唯一定位一个 Java 项目/依赖的“地址**
+> 现实世界：省 + 市 + 门牌号
+> Maven世界：groupId + artifactId + version
+- groupld:组织或公司
+- artifactld:项目名(模块名)
+- version:版本号
+
+**案例(SpringBoot):**
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <version>3.2.0</version>
+</dependency>
+```
+**在IDEA中导入Maven项目:**
+- 第一种方法:项目结构-->modules-->加号-->导入pom文件
+- 第二种方法:点击IDEA侧边栏的M的Maven图标，点击加号导入pom文件
+
+**Maven的依赖结构:**
+```xml
+<dependency>
+    <groupId>依赖所属组织</groupId>
+    <artifactId>依赖名称</artifactId>
+    <version>版本号</version>
+</dependency>
+```
+**真实的例子:**
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.0.33</version>
+</dependency>
+```
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+**测试依赖(scope):**
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <scope>provided</scope>
+</dependency>
+```
+**dependency的scope使用:**
+- **compile(默认)**:全部阶段可用
+- **test**:只在测试用
+- **provided**:编译用,运行不用
+- **runtime**:运行时用
+
+**排除依赖:exclusions(详细使用在网络上查找)**
+
+**Maven的生命周期(Maven 帮你规定好的一套“从代码到运行/发布”的标准流程):**
+
+**1.Clean(清理)生命周期阶段:**
+- pre-clean:清理前准备
+- clean:删除target
+- post-clean:清理后处理
+
+**2.Default(构建项目)生命周期阶段:**
+- validate:校验项目结构
+- compile:编译代码
+- test:执行测试
+- package:打包(jar/war)
+- install:安装到本地仓库
+- deploy:发布到远程仓库
+
+**3.Site(生产项目文档，了解即可)生命周期阶段:**
+- site:生成站点文档
+- deploy-site:发布文档
+
+**真实开发流程:**
+```text
+写代码
+  ↓
+mvn clean
+  ↓
+mvn compile
+  ↓
+mvn test
+  ↓
+mvn package
+  ↓
+mvn install
+```
+**形象比喻:**
+```text
+validate → 检查原料
+compile → 加工零件
+test → 质量检测
+package → 装箱
+install → 入库
+deploy → 发货
+```
+> Maven 有三套生命周期：Clean（清理）、Default（构建）、Site（文档），其中 Default 生命周期最重要，包含编译、测试、打包、安装等核心流程。
+> 后面的阶段都是依据于前面的阶段的
+
+**测试的分类:**
+- 单元测试(白盒测试):对**最小功能单元（方法/函数**进行测试
+- 集成测试(灰盒测试):测试多个模块之间是否能正常协作
+- 系统测试(黑盒测试):整个系统是否按需求正常运行
+- 验收测试(黑盒测试):由用户或客户验证系统是否满足需求
+> 白盒测试(内部):测试逻辑,黑盒测试(外部):测试功能,
+> 
+> 灰盒测试(内部与外部):既测试逻辑，又测试功能
+
+**单元测试:对程序中“最小功能单元”（通常是方法）进行正确性验证的测试方式**
+
+**JUnit:最流行的Jave测试框架之一，方便程序进行单元测试**
+- 测试代码与源代码分开，便于维护
+- 可以根据需要进行自动化测试
+- 可自动分析测试结果，产出测试报告
+
+**1.首先在pom.xml文件中引入JUnit:**
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.1</version>
+        </dependency>
+    </dependencies>
+```
+
+**2.test/java目录下,创建测试类,并编写对应的测试方法,并在方法上声明@Test注解**
+```java
+package org.example;
+
+import org.junit.jupiter.api.Test;
+
+public class UserServiceTest {
+
+    @Test
+    public void test(){
+        UserService userService = new UserService();
+        Integer age = userService.getAge("102302233202021042");
+        System.out.println(age);
+    }
+
+    @Test
+    public void testGetGender(){
+        UserService userService = new UserService();
+        String gender = userService.getGender("401203330020201342");
+        System.out.println(gender);
+    }
+
+}
+```
+> Java中能运行，不能代表代码没有问题，比如值是否跟我们预期想要的是一样的
+
+**断言:JUnit提供了一些辅助方法，用来帮助我们确定被测试的方法是否按照预期的效果正常工作，这种方式被称为断言**
+```java
+// CalculatorTest.java
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+
+    Calculator c = new Calculator();
+
+    // ================= 基本断言 =================
+
+    @Test
+    public void testAdd() {
+        // 断言：期望值 = 5，实际值 = 方法结果
+        assertEquals(5, c.add(2, 3), "加法计算错误");
+    }
+
+    @Test
+    public void testIsEven() {
+        // 断言 true
+        assertTrue(c.isEven(4), "4 应该是偶数");
+
+        // 断言 false
+        assertFalse(c.isEven(5), "5 不应该是偶数");
+    }
+
+    // ================= 空值断言 =================
+
+    @Test
+    public void testNull() {
+        String str = null;
+
+        // 判断是否为 null
+        assertNull(str, "应该为 null");
+
+        // 判断不为 null
+        assertNotNull(c.getName(), "返回值不应该为 null");
+    }
+
+    // ================= 字符串断言 =================
+
+    @Test
+    public void testString() {
+        // 判断字符串是否相等
+        assertEquals("Tom", c.getName(), "名字不匹配");
+    }
+
+    // ================= 数组断言 =================
+
+    @Test
+    public void testArray() {
+        int[] expected = {1, 2, 3};
+        int[] actual = {1, 2, 3};
+
+        // 判断数组是否相同
+        assertArrayEquals(expected, actual, "数组不一致");
+    }
+
+    // ================= 异常断言（重点🔥） =================
+
+    @Test
+    public void testException() {
+        // 断言会抛出 ArithmeticException（除0异常）
+        assertThrows(ArithmeticException.class, () -> {
+            c.divide(10, 0);
+        }, "没有抛出除零异常");
+    }
+
+    // ================= 组合断言 =================
+
+    @Test
+    public void testAll() {
+        assertAll("组合测试",
+                () -> assertEquals(5, c.add(2, 3)),
+                () -> assertTrue(c.isEven(6)),
+                () -> assertEquals("Tom", c.getName())
+        );
+    }
+}
+```
+
+**JUnit常见注解:**
+```java
+import org.junit.jupiter.api.*;
+
+public class UserServiceTest {
+
+    // ================= 生命周期注解 =================
+
+    @BeforeAll
+    static void beforeAll() {
+        // 在所有测试方法执行之前，只执行一次（必须是 static）
+        System.out.println("🔥 所有测试开始之前执行（初始化环境）");
+    }
+
+    @AfterAll
+    static void afterAll() {
+        // 在所有测试方法执行之后，只执行一次
+        System.out.println("🔥 所有测试结束之后执行（释放资源）");
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        // 每个测试方法执行之前都会执行
+        System.out.println("👉 每个测试前执行");
+    }
+
+    @AfterEach
+    void afterEach() {
+        // 每个测试方法执行之后都会执行
+        System.out.println("👉 每个测试后执行");
+    }
+
+    // ================= 测试方法 =================
+
+    @Test
+    void testAdd() {
+        System.out.println("测试加法逻辑");
+    }
+
+    @Test
+    void testDelete() {
+        System.out.println("测试删除逻辑");
+    }
+
+    // ================= 禁用测试 =================
+
+    @Disabled("暂时不测试这个方法")
+    @Test
+    void testUpdate() {
+        System.out.println("这个不会执行");
+    }
+
+    // ================= 重复测试 =================
+
+    @RepeatedTest(3)
+    void testRepeat() {
+        System.out.println("重复执行测试");
+    }
+
+    // ================= 参数化测试 =================
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4})
+    void testParam(int num) {
+        System.out.println("参数是：" + num);
+    }
+
+    // ================= 显示名称 =================
+
+    @DisplayName("自定义测试名称")
+    @Test
+    void testName() {
+        System.out.println("测试名称展示");
+    }
+
+    // ================= 超时测试 =================
+
+    @Test
+    @Timeout(2) // 超过2秒就失败
+    void testTimeout() throws InterruptedException {
+        Thread.sleep(1000); // 模拟耗时操作
+        System.out.println("未超时");
+    }
+}
+```
+> 两个Before注解主要用来做环境的准备工作
+> 两个After注解主要用来做资源的释放工作
+
+**JUnit的参数化测试:**
+```java
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorParamTest {
+
+    Calculator calculator = new Calculator();
+
+    // ================= 1. 单参数测试 =================
+    @DisplayName("这是单元测试修改后的名字")
+    @ParameterizedTest
+    @ValueSource(ints = {2, 4, 6, 8, 10})
+    void testIsEven(int num) {
+        // 每次传入一个参数
+        assertTrue(calculator.isEven(num));
+    }
+
+    // ================= 2. 单参数（反例） =================
+    @DisplayName("这是单元测试修改后的名字2")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 3, 5, 7})
+    void testIsNotEven(int num) {
+        assertFalse(calculator.isEven(num));
+    }
+
+    // ================= 3. 参数 + 期望值 =================
+    @DisplayName("这是单元测试修改后的名字3")
+    @ParameterizedTest
+    @CsvSource({
+            "2, 4",
+            "3, 9",
+            "5, 25",
+            "10, 100"
+    })
+    void testSquare(int input, int expected) {
+        // input → 输入值
+        // expected → 期望结果
+        assertEquals(expected, calculator.square(input));
+    }
+}
+```
+**其他案例:**
+```java
+package org.example;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+public class UserServiceTest {
+    @DisplayName("测试性别A1")
+    @Test
+    public void test(){
+        UserService userService = new UserService();
+        Integer age = userService.getAge("102302233202021042");
+        System.out.println(age);
+    }
+
+    @DisplayName("测试性别A2")
+    @Test
+    public void testGetGender(){
+        UserService userService = new UserService();
+        String gender = userService.getGender("401203330020201342");
+        System.out.println(gender);
+    }
+
+    /**
+     * 参数化测试
+     */
+    @DisplayName("参数化测试")
+    @ParameterizedTest
+    @ValueSource(strings = {"401203330020201342","401203330020201322","211203330020201342"})
+    public void testGetGender2(){
+        UserService userService = new UserService();
+        Integer age = userService.getAge("102302233202021042");
+        System.out.println(age);
+    }
+}
+```
+
+**`Run xxx with Coverage`:运行并查看覆盖率**
+> 覆盖率可以查看类的测试、方法的测试、代码的测试、分支的测试覆盖率
+
+**Maven的依赖范围**
+1. compile: 编译时依赖，默认范围。在编译、测试和运行时都有效，会打包到最终的构件中。
+2. provided: 已提供范围。在编译和测试时有效，但在运行时由容器或JDK提供，不会打包到最终构件中。例如：servlet-api。
+3. runtime: 运行时范围。在测试和运行时有效，但编译时不需要。例如：JDBC驱动实现。
+4. test: 测试范围。仅在测试编译和执行时有效，不会打包到最终构件中。例如：JUnit。
+5. system: 系统范围。与provided类似，但需要显式提供本地文件系统中的jar包路径，不推荐使用。
+6. import: 导入范围。仅用于`<dependencyManagement>`部分，用于导入其他POM文件的依赖管理配置。
+
+**Maven常见问题:因为网络问题没有下载成功，Maven会留下残留**
+1. 删除Maven的缓存文件：
+   - 找到本地仓库目录（通常在 `~/.m2/repository`）
+   - 删除包含 `.lastUpdated` 文件的目录
+   - 或者使用命令清理：`mvn dependency:purge-local-repository`
+2. 重新下载依赖：
+   - 在 IDEA 中右键项目 → Maven → Reload Project
+   - 或使用命令行：`mvn clean install -U`（-U 表示强制更新快照和发布版本）
+3. 配置镜像源加速下载：
+   - 在 `settings.xml` 中配置阿里云镜像：
+```xml
+<mirrors> 
+    <mirror> 
+        <id>aliyunmaven</id> 
+        <mirrorOf>*</mirrorOf> 
+        <name>阿里云公共仓库</name> 
+        <url>https://maven.aliyun.com/repository/public</url> 
+    </mirror> 
+</mirrors>
+```
+4. 检查网络连接和代理设置
+5. 手动删除有问题的依赖目录后重新构建项目

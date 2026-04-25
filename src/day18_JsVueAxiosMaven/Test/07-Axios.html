@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS-引入方式</title>
+</head>
+<body>
+
+    <input type="button" value="获取数据GET" id="btnGET">
+    <input type="button" value="获取数据POST" id="btnPOST">
+
+    <script src="js/axios.js"></script>
+  <script >
+    // 发送GET请求
+    document.querySelector('#btnGET').addEventListener('click',()=>{
+        //axios发起异步请求
+        axios({
+            url: 'https://mock.apifox.cn/m1/3083103-0-default/emps/list',
+            method: 'GET'
+        }).then((result)=>{ //成功回调函数
+            console.log(result.data);
+        }).catch((err)=>{ //失败回调函数
+            console.log(err);
+        })
+    })
+
+        // 发送POST请求
+    document.querySelector('#btnPOST').addEventListener('click',()=>{
+        //axios发起异步请求
+        axios({
+            url: 'https://mock.apifox.cn/m1/3083103-0-default/emps/update',
+            method: 'POST',
+            data: {
+                id: 1
+            }
+        }).then((result)=>{ //成功回调函数
+            console.log(result.data);
+        }).catch((err)=>{ //失败回调函数
+            console.log(err);
+        })
+    })
+  </script>
+</body>
+</html>

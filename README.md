@@ -3226,3 +3226,484 @@ public class UserServiceTest {
 ```
 4. 检查网络连接和代理设置
 5. 手动删除有问题的依赖目录后重新构建项目
+
+**SpringBoot:是一个用来“快速开发 Java 后端项目”的框架，让你不用写大量配置就能直接运行 Spring 应用**
+> 之前写项目需要配置许多(XML、Tomcat、依赖一堆)
+> 
+> **SpringBoot可以自动配置**，不需要我们配置，只需要写代码，SpringBoot会自动完成很多配置
+
+**SpringBoot入门程序:**
+- 1.创建SpringBoot项目
+- 2.编写Controller类
+- 3.编写启动类(或者用已有的启动类)
+- 4.运行项目
+
+**HelloController.java(Controller类)**
+```java
+package org.example.springbootdemo;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController // 表示当前是一个请求处理类
+public class HelloController {
+    @RequestMapping("/hello")
+    public String hello(String name){
+        System.out.println("name:"+name);
+        return "Hello " + name + "~";
+    }
+}
+```
+**SpringBootDemoApplication.java(启动类)**
+```java
+package org.example.springbootdemo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootdemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootdemoApplication.class, args);
+    }
+
+}
+```
+> **@RestController**: 表示当前是一个请求处理类，处理所有的请求，返回的数据都是json格式
+> **@RequestMapping**: 表示当前类处理请求的路径，可以指定多个路径
+> **@SpringBootApplication**: 启动类注解，表示当前是一个SpringBoot项目
+
+> 如果创建Module时,Server URL(骨架)连不上，就用国内阿里云的镜像去连
+> 
+> start.aliyun.com
+
+**HTTP协议:是浏览器和服务器之间“传递数据的规则”（通信协议）**
+
+**HTTP请求协议的数据格式**
+1. 请求行: 请求数据的第一行(请求方式 请求路径 HTTP/1.1)
+2. 请求头:第二行开始,格式key:value
+3. 请求体:如果是POST请求,则存放请求参数
+
+**SpringBoot请求协议的数据获取:**
+```java
+package org.example.springbootdemo;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class RequestController {
+
+    @RequestMapping("/request")
+    public String request(HttpServletRequest request){
+        // 1. 获取请求方式
+        String method = request.getMethod(); //GET
+        System.out.println("请求方式:"+ method);
+
+        // 2.获取请求url地址
+        String url = request.getRequestURI().toString(); // localhost:8080/requests
+        System.out.println("请求url地址:"+ url);
+        String uri = request.getRequestURI(); // /request
+        System.out.println("请求uri地址:"+ uri);
+
+        // 3.获取请求协议
+        String protocol = request.getProtocol(); // HTTP/1.1
+        System.out.println("请求协议:"+protocol);
+
+        // 4.获取请求参数 - name,age
+        String name = request.getParameter("name");
+        String age = request.getParameter("age");
+        System.out.println("name:"+name+", age:"+age);
+
+        // 5.获取请求头 - Accept
+        String accept = request.getHeader("Accept");
+        // 如果需要获取Cookie，则把Accept改一下就行
+
+        return "OK";
+    }
+}
+```
+> 浏览器访问`http://localhost:8080/request?name=shadown7z&age=18`
+
+> 可以从代码看出`@RequetMapping("/request")`是请求路径的设置
+ 
+> 而`HttpServletRequest`对象里面封装了所有的请求信息，直接调用request.xx就能获取请求数据的内容
+> 
+> 再一个就是`?`后面是请求附带的内容数据,`&`表连接，连接前后数据
+
+**HTTP响应协议的数据格式:**
+1.响应行:响应数据第一行(协议、状态码、描述)
+2.第二行开始，格式key:value
+3.响应体:最后一部分，存放响应数据
+
+**HTTP响应的状态码:**
+1. 1xx 信息提示
+2. 2xx 请求成功
+3. 3xx 重定向
+4. 4xx 客户端错误(客户端的问题)
+5. 5xx 服务器错误
+
+**SpringBoot响应协议的数据获取:**
+> 使用封装的`HttpServletResponse`对象
+
+**SpringBoot的响应协议数据代码:**
+```java
+package org.example.springbootdemo;
+
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+
+@RestController
+public class ResponseController {
+
+    // 方式一 : 基于原始的HttpServletResponse封装
+    @RequestMapping("/response")
+    public void response(HttpServletResponse response) throws IOException {
+        // 1. 响应状态码
+        response.setStatus(401);
+
+        // 2. 设置响应头
+        response.setHeader("name", "shadown7z");
+
+        // 3. 设置响应体
+        response.getWriter().write("<h1>Hello World</h1>");
+    }
+
+    /**
+     * 方式二：使用ResponseEntity - Spring中封装的响应对象
+     */
+    @RequestMapping("/response2")
+    public ResponseEntity<String> response2(){
+        return ResponseEntity.status(401) // 1. 设置响应状态码
+                .header("name", "shadown7z") // 2. 添加响应头
+                .body("<h1>Hello Shadown7z</h1>"); // 3. 添加响应体
+    }
+}
+```
+> 通常情况下响应状态码不需要我们自己设置，SpringMVC会自动设置响应状态码，比如返回200，400，500等。
+
+**SpringBootWeb案例:(多看阶段3第四章的SpringBootWeb案例)**
+
+**写封装类`User.java`**
+```java
+package com.shadow.spirngbotweb01.pojo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * 用户信息
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    private Integer id;
+    private String userame;
+    private String password;
+    private String name;
+    private Integer age;
+    private LocalDateTime updateTime;
+}
+```
+**写`UserController.java`,Controller类:**
+```java
+package com.shadow.spirngbotweb01.controller;
+
+import cn.hutool.core.io.IoUtil;
+import com.shadow.spirngbotweb01.pojo.User;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+/**
+ * 用户信息的Controller
+ */
+@RestController
+public class UserController {
+    @RequestMapping("/list")
+    public List<User> list() throws Exception {
+        // 1. 加载并读取user.txt文件，获取用户数据
+        //InputStream in = new FileInputStream("D:\\Java\\CodeWordspace\\untitled\\untitled\\spirngbot-web-01\\src\\main\\resources\\user.txt");
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("user.txt");
+        ArrayList<String> lines = IoUtil.readLines(in, StandardCharsets.UTF_8, new ArrayList<>());
+
+        // 2. 解析用户信息, 封装成User对象 -> list集合
+        List<User> userList = lines.stream().map(line -> {
+            String[] parts = line.split(",");
+            Integer id = Integer.parseInt(parts[0]);
+            String username = parts[1];
+            String password = parts[2];
+            String name = parts[3];
+            Integer age = Integer.parseInt(parts[4]);
+            LocalDateTime updateTime = LocalDateTime.parse(parts[5], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            return new User(id, username, password, name, age, updateTime);
+        }).toList();
+
+        // 3. 返回数据(json)
+        return userList;
+
+    }
+}
+```
+> 1.获取数据,
+> 2.封装数据,
+> 3.返回数据(json)
+
+**`@ResponseBody`注解的作用:**
+- 将controller方法的返回返回值转为json格式的数据
+- 如果是对象或集合,会先转为json,再响应
+- @RestController = @Controller + @Responsebody
+
+**以上的代码要反复敲好几遍,静态资源在配套资料里**
+
+**分层解耦-三层架构:**
+- controller: 接收和响应数据
+- service: 逻辑处理
+- dao: 数据访问(Data Access Object),负责数据访问操作
+> 为什么要分成解耦?因为这样复用性高、易维护
+
+> controller调用service,service调用dao
+> 
+> controller --> service ---> dao
+
+**UserController.java**
+```java
+package com.shadow.spirngbotweb01.controller;
+
+import cn.hutool.core.io.IoUtil;
+import com.shadow.spirngbotweb01.pojo.User;
+import com.shadow.spirngbotweb01.service.UserService;
+import com.shadow.spirngbotweb01.service.impl.UserServiceImpl;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+/**
+ * 用户信息的Controller
+ */
+@RestController
+public class UserController {
+
+    private UserService userService = new UserServiceImpl();
+
+    @RequestMapping("/list")
+    public List<User> list() throws Exception {
+        // 1. 调用service获取数据
+        List<User> userList = userService.findAll();
+
+
+        // 2. 返回数据(json)
+        return userList;
+
+    }
+}
+```
+
+**UserServiceImpl.java**
+```java
+package com.shadow.spirngbotweb01.pojo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * 用户信息
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    private Integer id;
+    private String username;
+    private String password;
+    private String name;
+    private Integer age;
+    private LocalDateTime updateTime;
+}
+```
+
+**UserDaoImpl.java**
+````java
+package com.shadow.spirngbotweb01.dao.impl;
+
+import cn.hutool.core.io.IoUtil;
+import com.shadow.spirngbotweb01.dao.UserDao;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserDaoImpl implements UserDao {
+    @Override
+    public List<String> findAll(){
+        // 1. 加载并读取user.txt文件，获取用户数据
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("user.txt");
+        ArrayList<String> lines = IoUtil.readLines(in, StandardCharsets.UTF_8, new ArrayList<>());
+        return lines;
+    }
+}
+````
+> 接口代码没有写，因为没有什么代码，只是定义了一个规范
+
+> 分三层架构，就是 controller --> service --> dao ,这样子调用的
+
+**分层之后的解耦操作:**
+- 耦合:衡量软件中各个层/各个模块的依赖关联程度
+- 内聚:软件中各个功能模块内部的功能联系
+
+**内聚：一个部门是否只做一件事**
+**耦合：部门之间是否互相依赖过多**
+> 软件设计的黄金原则:**低耦合+高内聚**
+
+> **耦合看"模块之间"**
+> 
+> **内聚看"模块内部"**
+
+**IOC(Inversion Of Control)控制反转和DI(Dependency Injection)依赖注入:**
+- **IOC**:(**对象操作控制权交给容器**)控制反转，反转控制，反转对象，反转对象实例，反转对象创建过程
+- **DI**:(**注入所需的依赖对象**)依赖注入，注入对象，注入对象实例，注入对象创建过程
+- Bean对象: IOC容器中创建、管理的对象，被称之为**Bean**
+
+**Repository 层（数据层）:**
+```java
+package com.example.demo.repository;
+
+import org.springframework.stereotype.Repository;
+
+@Repository  // 交给IOC容器管理
+public class UserRepository {
+
+    public String getUserById(Long id) {
+        return "User{id=" + id + ", name=Tom}";
+    }
+}
+```
+
+**Service 层（业务层）:**
+```java
+package com.example.demo.service;
+
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service  // 交给IOC容器管理
+public class UserService {
+
+    // DI：依赖注入
+    @Autowired
+    private UserRepository userRepository;
+
+    public String getUser(Long id) {
+        return userRepository.getUserById(id);
+    }
+}
+```
+
+**Controller 层（接口层）:**
+```java
+package com.example.demo.controller;
+
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/{id}")
+    public String getUser(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
+}
+```
+
+**启动类:**
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+**@Component是底层的通用注解**
+> `@Component`，把一个普通类交给 Spring 容器管理（变成 Bean），是最底层通用注解
+
+> @Component 是 Spring IoC 容器“收编普通类”的入口注解
+> 
+>@Service / @Repository / @Controller 只是语义增强版的 @Component
+
+**Spring IOC/DI常用注解:**
+
+**Bean注册类注解:**
+1. @Component : 最通用的底层注解,Bean注册注解
+2. @Service : (业务层专用)层级注解,Bean注册注解
+3. @Repository : (数据访问层专用)标识数据库访问类
+4. @Controller : (Web控制层专用)处理 HTTP 请求,返回页面或数据
+
+**依赖注入注解(DI):**
+1. @Autowired : 自动注入依赖,Spring 自动帮你“找对象 + 注入”
+2. @Qualifier : 指定注入哪个 Bean,指定注入的 Bean 名称
+
+**请求处理相关(Web层):**
+1. @RequestMapping : 映射请求路径,处理 HTTP 请求
+2. @GetMapping / @PostMapping : 请求方法简化版
+3. @PathVariable : 获取路径参数
+4. @RequestParam : 获取请求参数
+5. @RequestBody : 接收 JSON 请求体
+
+**Spring Boot 启动类:**
+1. @SpringBootApplication : 启动类注解,Spring Boot 启动类,自动配置 Spring Boot 应用
+
+**IOC扫描核心:**
+1. @ComponentScan : 扫描组件
+
+**事务相关:**
+1. @Transactional : 事务注解,控制事务
+- 自动开启事务
+- 出错自动回滚

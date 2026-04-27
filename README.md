@@ -272,19 +272,16 @@ abstract class Animal {
 
 **2026年4月20日：**
 
-**TreeSet保留重复的方法：CompareTo比较过后，返回非0数字(1或-1最好)进行保留**
+**TreaSet:**
+- **TreeSet保留重复的方法：CompareTo比较过后，返回非0数字(1或-1最好)进行保留**
+- **TreeSet中比较器排序优先于自然排序（重写CompareTo方法的排序）**
+- **TreeSet比较器排序，参数1-参数2，正序。参数2-参数1倒序**
 
-**TreeSet中比较器排序优先于自然排序（重写CompareTo方法的排序）**
-
-**TreeSet比较器排序，参数1-参数2，正序。参数2-参数1倒序**
-
-**HashSet集合保证元素唯一，需要同时重写hashCode和equals方法**
-
-**HashSet底层结构（jdk8版本）：数组+链表+红黑树**
-
-**HashSet底层原理：（jdk8以前头插法，jdk8以后尾插法）字符串比较时计算它的取模值（哈希值），例如数组长度15，取模值15。JDK8开始，当链表长度超过8，且数组长度>=64时，自动将链表转换为红黑树**
-
-**HashSet当数组存满到16 * 0.75 = 12 时，就自动扩容，每次扩容为原先容量的两倍（0.75为加载因子）**
+**HashSet:**
+- **HashSet集合保证元素唯一，需要同时重写hashCode和equals方法**
+- **HashSet底层结构（jdk8版本）：数组+链表+红黑树**
+- **HashSet底层原理：（jdk8以前头插法，jdk8以后尾插法）字符串比较时计算它的取模值（哈希值），例如数组长度15，取模值15。JDK8开始，当链表长度超过8，且数组长度>=64时，自动将链表转换为红黑树**
+- **HashSet当数组存满到16 * 0.75 = 12 时，就自动扩容，每次扩容为原先容量的两倍（0.75为加载因子）**
 
 **LinkHashSet:有序，不重复**
 
@@ -360,7 +357,7 @@ abstract class Animal {
 - LinkedHashMap : 键(哈希表 + 双向链表)(键唯一，并保证顺序)
 
 **Stream流：配合Lambda表达式，简化集合和数组操作**
-> - Ctrl + Alt + M 代码段直接变成方法(选中代码段)
+> - (IDEA快捷键)Ctrl + Alt + M 代码段直接变成方法(选中代码段)
 > - 流中的操作不会修改数据源,需要做Stream流的收集操作
 
 **2026年4月22日：异常**
@@ -1093,7 +1090,7 @@ url=jdbc://mysql://localhost:3306/test
 **进程:(正在运行的程序)**
 > 程序：一份静态的代码（比如一个软件安装包） 
 > 
->进程：这段代码被运行起来之后的“活动状态
+> 进程：这段代码被运行起来之后的“活动状态
 > 
 > **进程 = 程序 + 运行环境 + 当前状态**
 
@@ -1116,9 +1113,9 @@ url=jdbc://mysql://localhost:3306/test
 > **并行**:多核运行,真正"同时在做",是**物理上的同时执行**.并行需要同时，需要多核
 
 **Java开启线程的方式:**
-- 继承Thread类(不推荐),扩展性不好，不能多继承
-- 实现Runnable接口(推荐),扩展性好，它可以多继承，因为它是一个接口
-- 实现Callable接口,如果线程任务需要有返回值，可以用Callable接口
+- 继承**Thread类**(不推荐),扩展性不好，不能多继承
+- 实现**Runnable**接口(推荐),扩展性好，它可以多继承，因为它是一个接口
+- 实现**Callable**接口,如果线程任务需要有返回值，可以用Callable接口
 
 **线程相关方法:**
 ```java
@@ -3707,3 +3704,622 @@ public class DemoApplication {
 1. @Transactional : 事务注解,控制事务
 - 自动开启事务
 - 出错自动回滚
+
+**Mysql:关系型数据库**
+- Mysql初始化操作(在CMD上运行):`mysqld --initialize-insecure`
+- 将Mysql安装为系统服务:`mysqld -instal`
+- 启动Mysql服务:`net start mysql`
+- 想要停止Mysql服务:`net stop mysql`
+- 修改Mysql默认的账户和密码:`mysqladmin -u root password 000000`
+> SQL连接:`mysql -u用户名 -p密码 [-h数据库服务器IP地址 -P端口号]`
+
+**SQL语句:**
+1. **DDL:用来"定义数据结构"**
+2. **DML:用来"操作数据(增删改)"**
+3. **DQL:用来"查询数据"**
+4. **DCL:用来"控制权限"**
+
+**一、DDL（Data Definition Language）数据定义语言:**
+> 作用:创建表、修改表、删除表(定义表的结构)
+
+```sql
+CREATE TABLE user (
+    id INT,
+    name VARCHAR(20)
+);
+
+ALTER TABLE user ADD age INT;
+
+DROP TABLE user;
+```
+
+**DDL中常见的约束:**
+- `NOT NULL(非空约束)`:非空
+- `UNIQUE(唯一约束)`:唯一
+- `PRIMARY KEY(主键约束)`:主键(唯一+非空)
+- `FOREIGN KEY(外键约束)`:外键(关联表,让两张表的数据连接，保证数据的一致性和完整性)
+- `DEFAULT(默认值约束)`:默认值(若未指定值，则采用默认值)
+- `CHECK(检查约束)`:条件限制
+- `auto_increment`:主键自增，不用自己再添加
+
+**数据类型选取规则:在满足业务需求的前提下，尽可能选择占用磁盘空间小的数据类型：**
+- `age tinyint unsigned` (0,255)范围,`unsigned`指的是无符号的范围(但加上之后不能取负数)
+- `id int unsigned`
+- `varchar`是动态的更改占用空间(节约磁盘空间,但性能略低,因为需要计算)，而char是写死的，无论存没存都占空间(性能略高，但磁盘空间利用率低)
+- 大公司想要速度就用char，小公司对性能没要求，想节约磁盘空间就用varchar
+- 
+
+**常用操作:**
+```sql
+--查询所有数据库
+show databases;
+
+--查询当前数据库
+select databases;
+
+--使用/切换数据库
+use 数据库名;
+    
+--创建数据库
+create database [if not exists] 数据库名 [default charset utf8mb4]
+
+--删除数据库
+drop database [if exists] 数据库名
+```
+> 除了前三个，其他都是DDL
+> `database`可以替换为`scheme`提升打字效率
+
+**DDL主要操作数据结构(库、表、字段):**
+1. **CREATE(创建):**
+
+**创建数据库:**
+```sql
+CREATE DATABASE mydb;
+```
+**创建表:**
+```sql
+CREATE TABLE user (
+    id INT PRIMARY KEY,
+    name VARCHAR(20),
+    age INT
+);
+```
+**创建索引:**
+```sql
+CREATE INDEX idx_name ON user(name);
+```
+
+**DDL实战案例1（表的创建，根据页面原型，设计员工表）:**
+```sql
+-- 案例: 设计员工表
+-- 基础字段: id 主键; create_time 创建时间; update_time 修改时间;
+create table emp(
+    id int unsigned primary key  auto_increment comment 'ID, 主键',
+    username varchar(20) not null unique comment '用户名',
+    password varchar(32) default '000000' comment '密码',
+    name varchar(10) not null comment '姓名',
+    gender tinyint unsigned not null comment '性别, 1 男; 2 女',
+    phone char(11) not null  unique comment '手机号',
+    job tinyint unsigned comment '职位, 1 班主任; 2 讲师; 3 学工主管; 4 教研主管; 5 咨询师',
+    salary int unsigned comment '薪资',
+    entry_date date comment '入职日期',
+    image varchar(255) comment '图像',
+    create_time datetime comment '创建时间',
+    update_time datetime comment '修改时间'
+) comment '员工表';
+```
+> 不要忘了添加基础字段(id 主键, create_time 创建时间, update_time 修改时间)
+
+2. **ALTER(修改):**
+
+**添加字段:**
+```sql
+ALTER TABLE user ADD email VARCHAR(50);
+```
+
+**修改字段类型:**
+```sql
+ALTER TABLE user MODIFY age BIGINT;
+```
+
+**删除字段:**
+```sql
+ALTER TABLE user DROP email;
+```
+
+3. **DROP(删除):**
+
+**删除表:**
+```sql
+DROP TABLE user;
+```
+
+**删除数据库：**
+```sql
+DROP DATABASE mydb;
+```
+
+**删除索引:**
+```sql
+DROP INDEX idx_name ON user;
+```
+
+4**TRUNCATE(清空表):**
+
+**清空表(删除快，但不可回滚，清空数据(结构还在))**
+```sql
+TRUNCATE TABLE user;
+```
+
+5. **RENAME(重命名):**
+
+**修改表名:**
+```sql
+RENAME TABLE user TO user_new;
+```
+
+**DDL实战案例2（表结构-查询、修改、删除）:**
+```sql
+-- 查询当前数据库所有表
+show tables;
+
+-- 查看表结构
+desc emp;
+
+-- 查询建表语句
+show create table emp;
+
+-- 字段: 添加字段 qq varchar(13)
+alter table emp add qq varchar(13) comment 'QQ号码';
+
+-- 字段: 修改字段类型 qq varchar(15)
+alter table emp modify qq varchar(15) comment 'QQ号码';
+
+-- 字段: 修改字段名 qq -> qq_num varchar(15)
+alter table emp change qq qq_num varchar(15) comment 'QQ号码';
+
+-- 字段: 删除字段 qq_num
+alter table emp drop column qq_num;
+
+-- 修改表名
+alter table emp rename to employee;
+
+-- 删除表
+drop table employee;
+```
+
+**二、DML（Data Manipulation Language）数据操作语言:**
+> 用来操作数据(增删改查)
+
+```sql
+INSERT INTO user VALUES (1, 'Tom');
+
+UPDATE user SET name = 'Jerry' WHERE id = 1;
+
+DELETE FROM user WHERE id = 1;
+```
+
+**DML(操作数据库中的数据（增、删、改）):**
+
+**1. INSERT(插入数据,往表里新增数据):**
+```sql
+INSERT INTO user (id, name, age)
+VALUES (1, 'Tom', 18);
+```
+
+**插入多条数据:**
+```sql
+INSERT INTO user (id, name, age)
+VALUES 
+(2, 'Jerry', 20),
+(3, 'Mike', 22);
+```
+
+**DML实战案例1(Insert):**
+```sql
+-- DML : 插入数据 - insert
+-- 1. 为 emp 表的 username, password, name, gender, phone 字段插入值
+insert into emp(username,password,name,gender,phone) values ('songjiang','00000000','宋江','1','19384756473');
+
+-- 2. 为 emp 表的 所有字段插入值
+-- 方式1:
+insert  into emp(id, username, password, name, gender, phone, job, salary, entry_date, image, create_time, update_time)
+    values(null,'linchong','00000000','林冲','1','10293485743',1,6000,'2020-01-01','1.jpg',now(),now())
+
+-- 方式2:
+insert into emp values(null,'likui','00000000','李逵','1','14593485743',1,6000,'2020-01-01','1.jpg',now(),now())
+
+
+-- 3. 批量为 emp 表的 username, password, name, gender, phone  字段插入数据
+insert into emp values
+(null,'ruanxiaoer','00000000','阮小二','1','13893485743',1,6000,'2020-01-01','1.jpg',now(),now()),
+(null,'ruanxiaowu','00000000','阮小五','1','16093485743',1,6000,'2020-01-01','1.jpg',now(),now())
+```
+
+**2. UPDATE(更新数据,修改已有数据):**
+```sql
+UPDATE user
+SET name = 'Tony'
+WHERE id = 1;
+```
+
+**多字段更新:**
+```sql
+UPDATE user
+SET name = 'Lucy', age = 25
+WHERE id = 2;
+```
+
+**如果没有WHERE:(会更新整张表)**
+```sql
+UPDATE user SET age = 100;
+```
+
+**DML实战案例2(Update):**
+```sql
+-- DML : 更新数据 - update
+-- 1. 将 emp 表的ID为1员工 用户名更新为 'zhangsan', 姓名name字段更新为 '张三'
+update emp set username = 'zhangsan' , name  = '张三' where id = 1;
+-- 上面就是 set 后跟更改后的数据, where是要更改哪个或哪些字段
+
+-- 2. 将 emp 表的所有员工的入职日期更新为 '2010-01-01'
+update emp set entry_date = '2019-01-01';
+```
+
+**3. DELETE(删除数据,删除表中的数据):**
+
+**删除指定数据:**
+```sql
+DELETE FROM user
+WHERE id = 1;
+```
+
+**删除所有数据:**
+```sql
+DELETE FROM user;
+```
+
+**DML实战案例3(Delete):**
+```sql
+-- DML : 删除数据 - delete
+-- 1. 删除 emp 表中 ID为1的员工
+delete from emp where id = 1;
+
+-- 2. 删除 emp 表中的所有员工
+delete from emp ;
+```
+
+**三、DQL（Data Query Language）数据查询语言:**
+> 用来查询数据
+```sql
+SELECT * FROM user;
+
+SELECT name FROM user WHERE id = 1;
+```
+
+**基本查询-数据准备:**
+```sql
+-- DQL : 查询语句 数据准备
+create table emp(
+    id int unsigned primary key auto_increment comment 'ID,主键',
+    username varchar(20) not null unique comment '用户名',
+    password varchar(32) not null comment '密码',
+    name varchar(10) not null comment '姓名',
+    gender tinyint unsigned not null comment '性别, 1:男, 2:女',
+    phone char(11) not null unique comment '手机号',
+    job tinyint unsigned comment '职位, 1:班主任,2:讲师,3:学工主管,4:教研主管,5:咨询师',
+    salary int unsigned comment '薪资',
+    image varchar(300) comment '头像',
+    entry_date date comment '入职日期',
+    create_time datetime comment '创建时间',
+    update_time datetime comment '修改时间'
+) comment '员工表';
+
+-- 准备测试数据
+INSERT INTO emp(id, username, password, name, gender, phone, job, salary, image, entry_date, create_time, update_time)
+VALUES (1,'shinaian','123456','施耐庵',1,'13309090001',4,15000,'1.jpg','2000-01-01','2024-04-11 16:35:33','2024-04-11 16:35:35'),
+     (2,'songjiang','123456','宋江',1,'13309090002',2,8600,'2.jpg','2015-01-01','2024-04-11 16:35:33','2024-04-11 16:35:37'),
+     (3,'lujunyi','123456','卢俊义',1,'13309090003',2,8900,'3.jpg','2008-05-01','2024-04-11 16:35:33','2024-04-11 16:35:39'),
+     (4,'wuyong','123456','吴用',1,'13309090004',2,9200,'4.jpg','2007-01-01','2024-04-11 16:35:33','2024-04-11 16:35:41'),
+     (5,'gongsunsheng','123456','公孙胜',1,'13309090005',2,9500,'5.jpg','2012-12-05','2024-04-11 16:35:33','2024-04-11 16:35:43'),
+     (6,'huosanniang','123456','扈三娘',2,'13309090006',3,6500,'6.jpg','2013-09-05','2024-04-11 16:35:33','2024-04-11 16:35:45'),
+     (7,'chaijin','123456','柴进',1,'13309090007',1,4700,'7.jpg','2005-08-01','2024-04-11 16:35:33','2024-04-11 16:35:47'),
+     (8,'likui','123456','李逵',1,'13309090008',1,4800,'8.jpg','2014-11-09','2024-04-11 16:35:33','2024-04-11 16:35:49'),
+     (9,'wusong','123456','武松',1,'13309090009',1,4900,'9.jpg','2011-03-11','2024-04-11 16:35:33','2024-04-11 16:35:51'),
+     (10,'lichong','123456','林冲',1,'13309090010',1,5000,'10.jpg','2013-09-05','2024-04-11 16:35:33','2024-04-11 16:35:53'),
+     (11,'huyanzhuo','123456','呼延灼',1,'13309090011',2,9700,'11.jpg','2007-02-01','2024-04-11 16:35:33','2024-04-11 16:35:55'),
+     (12,'xiaoliguang','123456','小李广',1,'13309090012',2,10000,'12.jpg','2008-08-18','2024-04-11 16:35:33','2024-04-11 16:35:57'),
+     (13,'yangzhi','123456','杨志',1,'13309090013',1,5300,'13.jpg','2012-11-01','2024-04-11 16:35:33','2024-04-11 16:35:59'),
+     (14,'shijin','123456','史进',1,'13309090014',2,10600,'14.jpg','2002-08-01','2024-04-11 16:35:33','2024-04-11 16:36:01'),
+     (15,'sunerniang','123456','孙二娘',2,'13309090015',2,10900,'15.jpg','2011-05-01','2024-04-11 16:35:33','2024-04-11 16:36:03'),
+     (16,'luzhishen','123456','鲁智深',1,'13309090016',2,9600,'16.jpg','2010-01-01','2024-04-11 16:35:33','2024-04-11 16:36:05'),
+     (17,'liying','12345678','李应',1,'13309090017',1,5800,'17.jpg','2015-03-21','2024-04-11 16:35:33','2024-04-11 16:36:07'),
+     (18,'shiqian','123456','时迁',1,'13309090018',2,10200,'18.jpg','2015-01-01','2024-04-11 16:35:33','2024-04-11 16:36:09'),
+     (19,'gudasao','123456','顾大嫂',2,'13309090019',2,10500,'19.jpg','2008-01-01','2024-04-11 16:35:33','2024-04-11 16:36:11'),
+     (20,'ruanxiaoer','123456','阮小二',1,'13309090020',2,10800,'20.jpg','2018-01-01','2024-04-11 16:35:33','2024-04-11 16:36:13'),
+     (21,'ruanxiaowu','123456','阮小五',1,'13309090021',5,5200,'21.jpg','2015-01-01','2024-04-11 16:35:33','2024-04-11 16:36:15'),
+     (22,'ruanxiaoqi','123456','阮小七',1,'13309090022',5,5500,'22.jpg','2016-01-01','2024-04-11 16:35:33','2024-04-11 16:36:17'),
+     (23,'ruanji','123456','阮籍',1,'13309090023',5,5800,'23.jpg','2012-01-01','2024-04-11 16:35:33','2024-04-11 16:36:19'),
+     (24,'tongwei','123456','童威',1,'13309090024',5,5000,'24.jpg','2006-01-01','2024-04-11 16:35:33','2024-04-11 16:36:21'),
+     (25,'tongmeng','123456','童猛',1,'13309090025',5,4800,'25.jpg','2002-01-01','2024-04-11 16:35:33','2024-04-11 16:36:23'),
+     (26,'yanshun','123456','燕顺',1,'13309090026',5,5400,'26.jpg','2011-01-01','2024-04-11 16:35:33','2024-04-11 16:36:25'),
+     (27,'lijun','123456','李俊',1,'13309090027',5,6600,'27.jpg','2004-01-01','2024-04-11 16:35:33','2024-04-11 16:36:27'),
+     (28,'lizhong','123456','李忠',1,'13309090028',5,5000,'28.jpg','2007-01-01','2024-04-11 16:35:33','2024-04-11 16:36:29'),
+     (29,'songqing','123456','宋清',1,'13309090029',5,5100,'29.jpg','2020-01-01','2024-04-11 16:35:33','2024-04-11 16:36:31'),
+     (30,'liyun','123456','李云',1,'13309090030',NULL,NULL,'30.jpg','2020-03-01','2024-04-11 16:35:33','2024-04-11 16:36:31');
+```
+**DQL:基本查询案例(基本查询):**
+```sql
+--  =================== DQL: 基本查询 ======================
+-- 1. 查询指定字段 name,entry_date 并返回
+select name,entry_date from emp;
+
+-- 2. 查询返回所有字段
+-- 方式1：推荐(可以把要查询的字段罗列出来)
+select id,username,id, username, password, name, gender, phone, job, salary, entry_date, image, create_time, update_time from emp;
+
+-- 方式2:不推荐
+select * from emp;
+
+-- 3. 查询所有员工的 name,entry_date, 并起别名(姓名、入职日期)
+select name as 姓名,entry_date as 入职日期 from emp;
+
+select name 姓名,entry_date 入职日期 from emp;
+
+-- 4. 查询已有的员工关联了哪几种职位(不要重复) - distinct
+select distinct job from emp;
+```
+
+**1. WHERE(条件查询,过滤数据):**
+
+**条件查询:**
+```sql
+SELECT * FROM user
+WHERE age > 18;
+```
+
+**多条件查询:**
+```sql
+SELECT * FROM user
+WHERE age > 18 AND name = 'Tom';
+```
+> `AND`连接前后
+
+**DQL:案例1(条件查询)**
+```sql
+--  =================== DQL: 条件查询 ======================
+-- 1. 查询 姓名 为 柴进 的员工
+select * from emp where name = '柴进';
+
+-- 2. 查询 薪资小于等于5000 的员工信息
+select * from emp where salary <= 5000;
+
+-- 3. 查询 没有分配职位 的员工信息
+select * from emp where job is null;
+
+-- 4. 查询 有职位 的员工信息
+select * from emp where job is not null;
+
+-- 5. 查询 密码不等于 '123456' 的员工信息
+select * from emp where password != '123456';
+-- 下面这种方式不推荐，如果别人这样写你能知道就行
+select * from emp where password <> '123456';
+
+-- 6. 查询 入职日期 在 '2000-01-01' (包含) 到 '2010-01-01'(包含) 之间的员工信息
+select * from emp where entry_date between '2000-01-01' and '2010-01-01';
+
+-- 7. 查询 入职时间 在 '2000-01-01' (包含) 到 '2010-01-01'(包含) 之间 且 性别为女 的员工信息
+select * from emp where entry_date between '2000-01-01' and '2010-01-01' and gender = 2;
+
+-- 8. 查询 职位是 2 (讲师), 3 (学工主管), 4 (教研主管) 的员工信息
+select * from emp where job = 2 or job = 3 or job = 4;
+select * from emp where job in(2,3,4);
+-- 两种方式都可以
+
+-- 9. 查询 姓名 为两个字的员工信息( _:单个字符; % 任意个字符)
+select * from emp where name like '__';
+
+-- 10. 查询 姓 '李' 的员工信息
+select * from emp where name like '李%';
+
+-- 11. 查询 姓名中包含 '二' 的员工信息
+select * from emp where name like '%二%';
+```
+
+**2. ORDER BY(排序):**
+
+**升序排序:**
+```sql
+SELECT * FROM user
+ORDER BY age ASC;
+```
+> `ASC`表示升序
+
+**降序排序:**
+```sql
+SELECT * FROM user
+ORDER BY age DESC;
+```
+> `DESC`表示降序
+
+**DQL:案例2(排序查询)**
+```sql
+--  =================== 排序查询 ======================
+-- 1. 根据入职时间, 对员工进行升序排序 - asc
+select * from emp order by entry_date asc;
+select * from emp order by entry_date;
+
+-- 2. 根据入职时间, 对员工进行降序排序 - desc
+select * from emp order by entry_date desc;
+
+-- 3. 根据 入职时间 对公司的员工进行 升序排序 ， 入职时间相同 , 再按照 更新时间 进行降序排序
+select * from emp order by entry_date,update_time desc;
+```
+
+**3. LIMIT(分页):**
+
+**限制查询条数:**
+```sql
+SELECT * FROM user
+LIMIT 5;
+```
+
+**分页查询:**
+```sql
+SELECT * FROM user
+LIMIT 0, 10;
+```
+**DQL:案例3(分页查询)**
+```sql
+--  =================== 分页查询 ======================
+-- 1. 从起始索引0开始查询员工数据, 每页展示5条记录
+-- limit [起始索引],[展示的记录数]
+select * from emp limit 0,5;
+select * from emp limit 10;
+
+-- 2. 查询 第1页 员工数据, 每页展示5条记录
+select * from emp limit 0,5;
+
+-- 3. 查询 第2页 员工数据, 每页展示5条记录
+select * from emp limit 5,5;
+
+-- 4. 查询 第3页 员工数据, 每页展示5条记录
+select * from emp limit 10,5;
+
+-- 页码
+-- 起始索引
+```
+
+**4. GROUP BY(分组):**
+
+**按字段分组:**
+```sql
+SELECT age, COUNT(*)
+FROM user
+GROUP BY age;
+```
+**搭配聚合函数:**
+- COUNT（计数）
+- SUM（求和）
+- AVG（平均）
+- MAX（最大值）
+- MIN（最小值）
+
+**DQL:案例4(聚合函数)**
+```sql
+--  =================== DQL: 分组查询 ======================
+-- 聚合函数
+-- 注意: 所有的聚合函数不参与null的统计
+-- 1. 统计该企业员工数量 - count
+-- count(字段)
+select count(id) from emp;
+
+-- count(*) : 推荐
+select count(*) from emp;
+
+-- count(常量) : 推荐
+select count(1) from emp;
+
+-- 2. 统计该企业员工的平均薪资
+select avg(salary) from emp;
+
+-- 3. 统计该企业员工的最低薪资
+select min(salary) from emp;
+
+-- 4. 统计该企业员工的最高薪资
+select max(salary) from emp;
+
+-- 5. 统计该企业每月要给员工发放的薪资总额(薪资之和)
+select sum(salary) from emp;
+```
+
+**5. HAVING(分组后过滤):**
+
+**对分组结果过滤:**
+```sql
+SELECT age, COUNT(*)
+FROM user
+GROUP BY age
+HAVING COUNT(*) > 1;
+```
+> `WHERE` 分组前过滤,不能用聚合函数
+> `HAVING` 分组后过滤,可以使用聚合函数
+
+**`where`与`having`的区别:**
+- 执行时机不同,where是分组之前过滤(不满足where条件,不参与分组),having是分组之后对结果进行过滤
+- 判断条件不同,where不能对聚合函数进行判断,having可以
+
+**DQL:案例5(分组查询)**
+```sql
+-- 分组
+-- 注意：分组之后，select后的字段列表不能随意书写，能写的一般是分组字段 + 聚合函数
+-- 1. 根据性别分组 , 统计男性和女性员工的数量
+select gender,count(*) from emp group by gender;
+
+-- 2. 先查询入职时间在 '2015-01-01' (包含) 以前的员工 , 并对结果根据职位分组 , 获取员工数量大于等于2的职位
+select job,count(*) from emp where entry_date <= '2015-01-01' group by job having count(*) >= 2;
+-- 上面where在分组之前进行过滤，之后用having在分组之后进行过滤
+```
+
+**6. JOIN(多表查询,重点中的重点):**
+
+**INNER JOIN(内连接):**
+```sql
+SELECT u.name, o.order_id
+FROM user u
+INNER JOIN orders o ON u.id = o.user_id;
+```
+
+**LEFT JOIN(左连接):**
+```sql
+SELECT u.name, o.order_id
+FROM user u
+LEFT JOIN orders o ON u.id = o.user_id;
+```
+
+**DQL总结:**
+```text
+SELECT   → 查询数据
+WHERE    → 条件过滤
+ORDER BY → 排序
+LIMIT    → 分页
+GROUP BY → 分组
+HAVING   → 分组过滤
+JOIN     → 多表查询
+```
+**执行顺序的优先级:**
+```text
+FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+```
+```text
+SELECT → 查东西
+WHERE → 挑选条件
+ORDER BY → 排队排序
+LIMIT → 只拿一部分
+GROUP BY → 分组统计
+```
+
+**四、DCL（Data Control Language）数据控制语言:**
+> 用来控制权限
+```sql
+GRANT SELECT ON user TO 'tom';
+
+REVOKE SELECT ON user FROM 'tom';
+```
+
+```text
+DDL：定义结构（create / alter / drop）
+DML：操作数据（insert / update / delete）
+DQL：查询数据（select）
+DCL：权限控制（grant / revoke）
+```
+
+**DataGrip中的快捷键:**
+> `Alt + 1`左边侧边栏隐藏或开启
+> 
+> `Alt + 2`右边侧边栏隐藏或开启
+> 
+> `Ctrl + Enter`运行SQL语句
+> 
+> IDEA中也有类似的,需要自行探索
+

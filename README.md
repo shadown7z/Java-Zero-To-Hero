@@ -4323,3 +4323,58 @@ DCL：权限控制（grant / revoke）
 > 
 > IDEA中也有类似的,需要自行探索
 
+**JDBC:Java自带的连接数据库的一个库(工具):**
+- 静态SQL,用的是`Statement`
+- 动态SQL,用的是`PreparedStatement`
+- JDBC步骤:驱动连接--> 创建PreparedStatement(推荐)--> 执行SQL--> 处理结果--> 关闭连接
+
+**预编译SQL:**
+- 可以防止SQL注入攻击
+- 占位符:`?`
+- 性能更高(因为第一次查找过后就会缓存SQL,下次执行SQL的时候就不需要再次查找SQL了)
+
+**SQL注入：**
+- 登录本质上就是查询，注入SQL语句：`' or '1'='1` 就是 或者 1=1 ，1肯定是恒等于1，所以就会显示登录成功
+- 账号随便输，密码就是上面SQL语句中的`' or '1'='1`，登录成功,所以需要预编译SQL来防止SQL注入攻击
+
+**JDBC:Java的一个底层连接数据库的库(工具)**
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class JdbcTest {
+    public static void main(String[] args) throws Exception {
+
+        //1. 注册驱动
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+        //2. 获取数据库连接
+        String url = "jdbc:mysql://localhost:3306/web01";
+        String username = "root";
+        String password = "000000";
+        Connection connection = DriverManager.getConnection(url, username, password);
+
+        // 3. 获取SQL语句执行对象(给连接封装一下)
+        Statement statement = connection.createStatement();
+
+        // 4. 执行SQl语句
+        int i = statement.executeUpdate("update user set age = 25 where id = 1");
+        System.out.println("SQL执行完毕影响的记录数为:"+i);
+
+        //5. 释放资源
+        statement.close();
+        connection.close();
+    }
+}
+```
+> 一般不适用JDBC，而是使用MyBatis，JDBC有点繁琐
+> 不过MyBatis还有一些其他的三方库都是基于JDBC封装的
+
+**MyBatis:是一款优秀的持久层，用于简化JDBC的开发**
+- controller(控制层) ---> service(业务层) ---> dao(持久层)
+- dao(持久层)
+
+```java
+
+```

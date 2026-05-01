@@ -4375,6 +4375,360 @@ public class JdbcTest {
 - controller(控制层) ---> service(业务层) ---> dao(持久层)
 - dao(持久层)
 
-```java
+**MyBatis:Mapper接口**
 
+```java
+import java.util.List;
+
+@Mapper
+public interface UserMapper {
+    /**
+     * 查询全部
+     */
+    @Select("select * from user")
+    public List<User> findAll();
+}
 ```
+
+**IDEA没有识别你的SpringBoot项目怎么办？**
+- 找到你SpringBoot项目里的pom.xml文件，右键，选择`Add as Maven Project`
+- 之后重新加载一下你的Maven，确保你的SpringBoot项目被识别了
+
+**Mybatis核心组件分工:**
+```text
+| 组件            | 作用    |
+| ------------- | ----- |
+| Mapper接口      | 定义方法  |
+| Mapper.xml    | 写SQL  |
+| SqlSession    | 执行SQL |
+| Executor      | 真正执行  |
+| ResultMap     | 结果映射  |
+| Parameter     | 参数绑定  |
+| Configuration | 全局配置  |
+```
+
+**SpringBoot使用Mybatis前置配置:**
+
+**打开`resources`目录下SpringBoot的配置文件:**
+
+**application.properties**
+```properties
+# 配置数据库的连接
+spring.datasource.url=jdbc:mysql://localhost:3306/web01
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=root
+spring.datasource.password=000000
+```
+
+**UserMapper.java**
+```java
+package com.shadow.mapper;
+
+import com.shadow.pojo.User;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+// 应用程序在运行时,会自动的为该接口创建一个实现类对象(代理对象)
+@Mapper // 并且会自动将该实现类对象存入IOC容器中
+public interface UserMapper {
+    /**
+     * 查询所有用户信息
+     */
+    @Select("select * from user")
+    public List<User> findAll();
+}
+```
+> Mapper接口 = “你要干啥（方法声明）”
+> MyBatis是外卖平台，那Mapper接口 = 点菜按钮
+
+**编写测试类:**
+```java
+package com.shadow;
+
+import com.shadow.mapper.UserMapper;
+import com.shadow.pojo.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+
+@SpringBootTest  // SpringBoot单元测试的注解 - 当前测试类中的测试方法运行时，会启动springboot项目 - IOC容器
+class SpringbootMybatis1ApplicationTests {
+
+	@Autowired
+	private UserMapper userMapper;
+
+	@Test
+	void contextLoads() {
+		List<User> userlist = userMapper.findAll();
+		userlist.forEach(System.out::println);
+	}
+
+}
+```
+
+**总结:**
+
+1.SpringBoot+Mybatis入门程序操作步骤:
+准备工作:
+- 创建一个SpringBoot项目，并引入MyBatis依赖
+- 准备数据库、实体类
+- `application.properties`中配置数据库连接信息
+
+定义Mapper接口(`@Mapper`)，编写SQL
+
+2.SpringBoot的单元测试类上加注解
+- @SpringBootTest:会在单元测试时，加载SpringBoot的环境
+- 注意:测试类所在的包名必须和主类在同一个包下，或者子包下
+
+**Mybatis的配置:**
+
+**application.properties**
+```properties
+#配置mybatis的日志输出
+mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+```
+
+**数据库连接池:**
+- **SpringBoot**自带的连接池,默认是**HikariCP**,追光者连接池
+- **Druid(德鲁伊)**连接池,是阿里巴巴开源的数据库连接池项目
+
+**切换数据库连接池:**
+
+**pom.xml**
+```xml
+		<!--Druid连接池-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid-spring-boot-starter</artifactId>
+			<version>1.2.19</version>
+		</dependency>
+```
+
+**application.properties**
+```xml
+spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+```
+
+**Mybatis-增删改查-1.删除操作:**
+
+**UserMapper.java**
+```java
+    /**
+     * 根据ID删除用户信息
+     */
+    @Delete("delete from user where id = #{id}")
+    public void deleteById(Integer id);
+```
+
+**SpringbootMybatis1ApplicationTests.java**
+```java
+	/**
+	 * 测试删除用户
+	 */
+	public void testDeleteById() {
+		userMapper.deleteById(5);
+```
+
+**如果想要看返回值:**
+
+**UserMapper.java**
+```java
+    /**
+     * 根据ID删除用户信息
+     */
+    @Delete("delete from user where id = #{id}")
+    public Integer deleteById(Integer id);
+```
+> 把返回值改为Integer
+
+**SpringbootMybatis1ApplicationTests.java**
+```java
+/**
+ * 测试删除用户
+ */
+Integer i = userMapper.deleteById(5);
+System.out.println("执行完毕，影响的记录数:"+i);
+```
+> 输出结果为:执行完毕，影响的记录数:1
+
+**Mybatis中的 `#` 号 与 `$` 号:**
+> `#` 号表示占位符，生成预编译SQL(安全，性能高)
+> `$`号表示变量，拼接符参数直接拼接(不安全)，表明、字段名动态设置时使用
+> `$`号直接传变量，还是会存在SQL注入的问题，`#`占位符，不会被SQL注入
+
+**Mybatis-增删改查-2.新增操作:**
+
+**UserMapper.java**
+```java
+    /**
+     * 添加用户信息
+     */
+    @Insert("insert into user(username,password,name,age) values(#{username},#{password},#{name},#{age})")
+    public void insert(User user);
+```
+
+**SpringbootMybatis1ApplicationTests.java**
+```java
+	/**
+	 * 测试插入用户
+	 */
+	@Test
+	public void testInsert(){
+		User user = new User(null,"gaoyuanyuan","666888","高圆圆",18);
+		userMapper.insert(user);
+	}
+```
+
+**Mybatis-增删改查-3.修改操作:**
+
+**UserMapper.java**
+```java
+    /**
+     * 修改用户信息
+     */
+    @Update("update user set username = #{username},password=#{password},name=#{name},age = #{age} where id = #{id}")
+    public void update(User user);
+```
+
+**SpringbootMybatis1ApplicationTests.java**
+```java
+	/**
+	 * 测试更新用户
+	 */
+	@Test
+	public void testUpdate(){
+		User user = new User(1,"zhouyu","666888","周瑜",20);
+		userMapper.update(user);
+	}
+```
+> 把需要更改的值封装到对象中,然后调用update方法
+
+**Mybatis-增删改查-4.查询操作:**
+
+**UserMapper.java**
+```java
+    /**
+     * 查询用户信息
+     * @Param 注解的作用是为接口的方法形参起名字的(当你要传递多个参数的时候)
+     */
+    @Select("select * from user where username = #{username} and password = #{password}")
+    public User findByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
+```
+> `@Param`就是给形参起名字的(当你要传递多个参数的时候)
+> 基于**官方骨架创建的springboot项目**中,接口编译时，会保留方法形参名,`@Param`注解可以省略(#{形参名})
+
+**SpringbootMybatis1ApplicationTests.java**
+```java
+	/**
+	 * 根据用户名和密码查询用户信息
+	 */
+	@Test
+	public void testFindByUsernameAndPassword(){
+		User user = userMapper.findByUsernameAndPassword("zhouyu", "666888");
+		System.out.println(userMapper);
+	}
+```
+> 报错从下往上找
+
+**XML映射配置:**
+- 在Mybatis中,既可以通过注解配置SQL语句,也可以通过XML配置SQL语句
+- 默认规则:
+- 1. XML映射文件的名称与Mapper接口**名称一致**,并且需要放到相同包下(**同包同名**)
+- 2. XML映射文件的`namespace`属性为Mapper接口全限定名一致(**`namespace`与Mapper接口名相一致**)
+- 3. XML映射文件中sql语句的id与Mapper 接口中的方法名一致,并保持返回类型一致(**`id`右边是方法名**)
+
+**UserMapper.xml**
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shadow.mapper.UserMapper">
+    <!-- resultType: 查询返回的单条记录所封装的类型 -->
+    <select id="findAll" resultType="com.shadow.pojo.User">
+        select id, username, password, name, age from user
+    </select>
+</mapper>
+```
+
+**到底使用注解开发还是使用XML开发呢？**
+> 1. 开发简单(简单的CRUD)，使用注解开发
+> 2. 如果需要实现复杂的SQL功能,建议使用XML来配置映射语句
+
+**XML映射文件-辅助配置:**
+
+**指定XML映射配置文件的位置:**
+
+**application.properties**
+```properties
+mybatis.mapper-locations=classpath:mapper/*.xml
+```
+**IDEA插件: Mybatisx**
+
+**SpringBoot项目配置文件:**
+```properties
+spring.application.name=springboot-mybatis1
+
+# 配置数据库的连接
+spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
+spring.datasource.url=jdbc:mysql://localhost:3306/web01
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=root
+spring.datasource.password=000000
+
+#配置mybatis的日志输出
+mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+
+#指定XML映射配置文件的位置
+mybatis.mapper-locations=classpath:mapper/*.xml
+```
+> `application.properties`
+
+**配置文件格式:**
+- SpringBoot 默认支持 `application.properties` 和 `application.yml` 等格式。
+- 详细查看配置文件的书写格式。
+
+**application.yaml**
+```yaml
+# 定义对象/Map集合
+user:
+  name: "Tome"
+  age: 18
+  gender: 男
+
+# 定义数组/List/Set集合
+hobby:
+  - Java
+  - Game
+  - Sport
+```
+> **演示1**
+
+**application.yaml**
+```yaml
+# 项目的名称
+spring:
+  application:
+    name: springboot-mybatis1
+  # 数据库的连接信息
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/web01
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 000000
+
+# Mybatis的相关配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml
+```
+
+Spring项目需要的配置:
+- `UserMapper.xml`定义Mapper接口的SQL语句(数据库的SQL语句)
+- `application.yaml`定义SpringBoot项目所需的配置

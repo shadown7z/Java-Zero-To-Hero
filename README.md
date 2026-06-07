@@ -4732,3 +4732,1004 @@ mybatis:
 Spring项目需要的配置:
 - `UserMapper.xml`定义Mapper接口的SQL语句(数据库的SQL语句)
 - `application.yaml`定义SpringBoot项目所需的配置
+
+**`Ajax`用于接口API,而`Websocket`常用于实时通信(微信,QQ)**
+```text
+前端
+ ├── AJAX → REST API（业务操作）
+ └── WebSocket → 实时推送
+```
+
+**Tlias智能学习辅助系统,后端开发:**
+
+**接口文档:**
+- 接口文档是对后端 API 接口的说明文档，用于描述接口如何调用、传什么参数、返回什么结果
+- 避免了前端不知道接口怎么调,后端不知道前端要什么
+- 而**接口文档**是需**要基于页面原型+需求**去制作的
+> 接口文档是对系统 API 的规范化说明，包含接口地址、请求方式、参数及返回结果等信息，用于指导前后端开发与系统集成。
+
+**前后端开发流程:**
+- 需求分析 ---> 接口设计(API接口文档) ---> 前后端并行开发(遵守规范) ---> 测试(前端、后端) ---> 前后端联调测试
+
+**Restful(REpresentational State Transfer)：**
+- 表述性状态转换，它是一种软件架构风格
+- RESTful 是一种基于 HTTP 协议的 API 设计风格，用来规范“如何设计接口” 
+
+**REST中请求方式代表操作:**
+- `GET`代表查询操作
+- `DELETE`代表删除操作
+- `POST`新增用户
+- `PUT`修改用户
+
+**接口测试软件:**
+- `Postman`和`Apifox`都可以进行接口测试,一般使用`Apifox`，因为`Apifox`功能强大
+
+**为什么要使用接口测试软件？**
+- 因为如果我们要进行接口的测试，而浏览器默认是`GET`请求,而我们需要手写代码去测试
+- 非常繁琐，所以使用接口测试软件
+
+**Tlias工程搭建:**
+- 创建`SpringBoot`工程,并引入web开发起步依赖、mybatis、mysql驱动、lombok。
+- 创建数据库`dept`,并在`application.yml`中配置数据库的基本信息
+- 准备基础代码结构，并引入实体类`Dept`及统一的响应结果封装类 `Result`
+
+**在创建好的项目中`java.com.xxx`目录下:**
+- 创建`controller`包，并创建`DeptController`类，并添加`@RestController`注解
+- 创建`service`包(业务逻辑)，并创建`impl.DeptServiceImpl`类，并添加`@Service`注解.创建`DepService`接口
+- 创建`mapper`包(映射类存放)，并创建`DeptMapper`类，并添加`@Mapper`注解
+- 创建`pojo`包(实现类存放),并创建`Dept`类和`Result`类
+
+**查询部门（功能开发）:**
+
+**接口开发:**
+- 根据`页面原型`+`API文档`进行接口开发
+- `Controller`:接收请求 ---> `Service`:业务逻辑,调用`Mapper`接口 ---> `Mapper`:处理数据的访问
+
+DeptController.java
+```java
+package com.shadow.controller;
+
+import com.shadow.pojo.Dept;
+import com.shadow.pojo.Result;
+import com.shadow.service.DeptService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class DepController {
+
+    @Autowired
+    private DeptService deptService;
+    //@RequestMapping(value = "/depts",method = RequestMethod.GET)
+    @GetMapping("/depts")
+    public Result list(){
+        System.out.println("查询全部部门数据");
+        List<Dept> deptList = deptService.findAll();
+        return Result.success(deptList);
+    }
+}
+```
+> `Controller`层接收数据，并调用`Service`层进行业务逻辑处理，并返回结果给前端
+
+DeptServiceImpl.java
+````java
+package com.shadow.service.impl;
+
+import com.shadow.mapper.DeptMapper;
+import com.shadow.pojo.Dept;
+import com.shadow.service.DeptService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class DeptServiceImpl implements DeptService {
+
+    @Autowired
+    private DeptMapper deptMapper;
+    @Override
+    public List<Dept> findAll() {
+        return deptMapper.findAll();
+    }
+}
+````
+> `Service`层进行业务逻辑处理，并调用`Mapper`层进行数据访问
+
+DeptMapper.java
+```java
+package com.shadow.mapper;
+
+import com.shadow.pojo.Dept;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+
+@Mapper
+public interface DeptMapper {
+
+    /**
+     * 查询所有的部门数据
+     */
+    @Select("select id, name, create_time, update_time from dept order by update_time desc")
+    List<Dept> findAll();
+}
+```
+> `Mapper`层进行数据访问，并返回结果给`Service`层
+
+**Mybatis结果封装:**
+> 实体类属性名 和 数据库表查询返回的字段名一致,mybatis会自动封装
+> 
+> 如果实体类属性名 和 数据库表查询返回的字段名不一致,不能自动封装
+> 
+> 解决方法:
+> 
+> **1.使用`@Results`注解指定封装规则**
+> 
+> **2.在SQL语句中为字段添加别名**
+> 
+> **3.开启驼峰命名自动映射(推荐),在`application.yaml`中进行配置**
+
+
+
+**1.`@Results`手动结果映射:**
+- 通过`@Results`及`@Result`注解,进行手动结果映射
+
+**DeptMapper.java**
+```java
+    /**
+     * 查询所有的部门数据
+     */
+    @Results({
+            @Result(column = "create_time" , property = "createTime"),
+            @Result(column = "update_time" , property = "updateTime")
+    })
+    @Select("select id, name, create_time, update_time from dept order by update_time desc")
+    List<Dept> findAll();
+```
+> 左边的`column`是数据库的字段名，右边的`property`是实体类的属性名
+> 
+> 手动对结果进行映射
+
+**2.在SQL语句中为字段添加别名:**
+```java
+@Select("select id as deptId, name as deptName, create_time createTime, update_time updateTime from dept order by update_time desc")
+List<Dept> findAll();
+```
+
+**3.开启驼峰命名自动映射(推荐):**
+```yaml
+# Mybatis的相关配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 开启驼峰命名映射开关
+    map-underscore-to-camel-case: true
+```
+
+**前后端联调测试:**
+
+**Nginx的反向代理:**
+
+**Nginx/conf/nginx.conf**
+```conf
+server {
+    listen 90;
+    #省略...
+    location ^~ /api/ {
+		rewrite ^/api/(.*)$ /$1 break;
+		proxy_pass http://localhost:8080;
+    }
+}
+```
+- `location`: 用于定义匹配路径匹配的规则,比如上面就是配置的正则
+- `^~ /api/`:表示精确匹配.即只匹配以/api/开头的请求
+- `rewrite`: 用于将匹配到的请求路径进行重写,比如上面就是将`/api/xxx`重写为`/xxx` 
+- `proxy_pass`: 用于代理转发,将匹配到的请求发给位于后端的指令服务器
+> 这段代码主要是把`/api/xxx`后面的路径给截下来,然后转发给`http://localhost:8080/xxx`
+
+**删除部门(功能开发):**
+
+**参数传递:**
+
+**方式一：HttpServletRequest 获取请求参数**
+```java
+    /**
+     * 删除部门 - 方式一：HttpServletRequest 获取请求参数
+     */
+    @DeleteMapping("/depts")
+    public Result delete(HttpServletRequest request){
+        String idStr = request.getParameter("id");
+        int id = Integer.parseInt(idStr);
+        System.out.println("删除部门id为：" + id);
+        return Result.success();
+    }
+```
+
+**方式二:@RequestParam 获取请求参数**
+```java
+    /**
+     *     删除部门 - 方式二：@RequestParam 获取请求参数
+     */
+    @DeleteMapping("/depts")
+    public Result delete(@RequestParam("id") Integer deptId){
+        System.out.println("删除部门id为：" + deptId);
+        return Result.success();
+    }
+```
+> `@RequestParam`注解用于获取请求参数
+
+```java
+    /**
+     * 删除部门 - 方式二：@RequestParam 获取请求参数
+     * 注意事项：一旦声明了@RequestParam注解，该参数在请求时必须传递，如果不传递将会报错(默认 required 为 true)     */
+    @DeleteMapping("/depts")
+    public Result delete(@RequestParam(value = "id",required = false) Integer deptId) {
+        System.out.println("删除部门id为：" + deptId);
+        return Result.success();
+    }
+```
+> `@RequestParam`注解的`required`属性默认为`true`,表示该参数必须传递,如果不传递将会报错
+> 如果设置为false则可以为空
+
+**方式三:省略@RequestParam(前端传递的请求参数与服务端方法形参名一致)(推荐)**
+```java
+    /**
+     * 删除部门 - 方式三：省略@RequestParam(前端传递的请求参数与服务端方法形参名一致)
+    */
+    @DeleteMapping("/depts")
+    public Result delete(Integer deptId) {
+        System.out.println("删除部门id为：" + deptId);
+        return Result.success();
+    }
+```
+- 如果你请求的是`?id=1`,那么服务端方法中的参数名就是`id`
+- 如果你请求的是`?deptId=1`,那么服务端方法中的参数名就是`deptId`
+- **前端传递的请求参数与服务端方法形参名一致**
+
+**删除部门(功能实现):**
+
+**DepController.java**
+```java
+    /**
+     * 删除部门 - 方式三：省略@RequestParam(前端传递的请求参数与服务端方法形参名一致)
+     */
+    @DeleteMapping("/depts")
+    public Result delete(Integer id) {
+        System.out.println("删除部门id为：" + id);
+        deptService.deleteById(id);
+        return Result.success();
+    }
+```
+> `Controller`层进行数据访问,并返回结果给`Service`层
+
+**DeptServiceImpl.java**
+```java
+    @Override
+    public void deleteById(Integer id) {
+        deptMapper.deleteById(id);
+    }
+```
+> `Service`层进行业务逻辑处理
+
+**DeptMapper.java**
+```java
+    /**
+     * 根据id删除部门
+     */
+    @Delete("delete from dept where id = #{id}")
+    void deleteById(Integer id);
+```
+> `Mapper`层进行数据访问
+>
+> 整体逻辑: `Controller`(接收请求和返回数据)  ---> `Service`(业务逻辑)  ---> `Mapper`(数据访问)
+
+**新增部门(功能开发):**
+
+**DepController.java**
+```java
+    /**
+     * 新增部门
+     */
+    @PostMapping("/depts")
+    public Result add(@RequestBody Dept dept){
+        System.out.println("新增部门：" + dept);
+        deptService.add(dept);
+        return Result.success();
+    }
+```
+> `@RequestBody`注解用于获取请求体中的数据
+> 
+> `dept`是前端传递的请求参数
+
+**DeptServiceImpl.java**
+``` java
+    @Override
+    public void add(Dept dept) {
+     // 1. 补全基础属性 - createTime , updateTime
+     dept.setCreateTime(LocalDateTime.now());
+     dept.setUpdateTime(LocalDateTime.now());
+     // 2. 调用Mapper接口方法插入数据
+     deptMapper.insert(dept);
+    }
+```
+> 需要补全基础属性 - createTime , updateTime
+
+**DeptMapper.java**
+```java
+    /**
+     * 新增部门
+     */
+    @Insert("insert into dept(name,create_time,update_time) values (#{name},#{createTime},#{updateTime})")
+    void insert(Dept dept);
+```
+> `Mapper`层进行数据访问
+
+**修改部门(功能开发):**
+
+**1.查询回显(根据id查询部门):**
+
+**DepController.java**
+```java
+    /**
+     * 根据ID查询部门
+     */
+    @GetMapping("/depts/{id}")
+    public Result getInfo(@PathVariable("id") Integer deptId){
+        System.out.println("根据ID查询部门 : "+ deptId);
+        return Result.success();
+    }
+```
+**简化写法:**
+```java
+     /**
+     * 根据ID查询部门
+     */
+    @GetMapping("/depts/{id}")
+    public Result getInfo(@PathVariable Integer id){
+        System.out.println("根据ID查询部门 : "+ id);
+        Dept dept = deptService.getById(id);
+        return Result.success(dept);
+    }
+```
+> 如果路径参数与方法形参名一致,那么可以省略@PathVariable注解
+
+**DeptServiceImpl.java**
+```java
+    @Override
+    public Dept getById(Integer id) {
+        return deptMapper.getById(id);
+    }
+```
+
+**DeptMapper.java**
+```java
+    /**
+     * 根据id查询部门
+     */
+    @Select("select id,name,create_time,update_time from dept where id = #{id}")
+    Dept getById(Integer id);
+```
+- **为什么需要查询回显?**
+- 如果不回显:用户要改部门名称 → 但不知道当前叫什么
+- 如果回显:用户要改部门名称 → 拿到当前部门的名称,就可以进行修改
+- 回显后的流程:**数据库数据 → 查询 → 展示给用户 → 用户修改 → 提交**
+
+**2.修改数据:**
+
+**DepController.java**
+```java
+    /**
+     * 修改部门
+     */
+    @PutMapping("/depts")
+    public Result update(@RequestBody Dept dept){
+        System.out.println("修改部门：" + dept);
+        deptService.update(dept);
+        return Result.success();
+    }
+```
+> `@RequestBody`: 用于获取请求体中的数据
+
+**DeptServiceImpl.java**
+```java
+    @Override
+    public void update(Dept dept) {
+        // 1. 补全基础属性-updateTime
+        dept.setUpdateTime(LocalDateTime.now());
+
+        // 2. 调用Mapper接口方法更新部门
+        deptMapper.update(dept);
+    }
+```
+- 补全基础属性-`updateTime`
+- 调用`Mapper`接口方法更新部门
+
+**DeptMapper.java**
+```java
+    /**
+     * 更新部门
+     */
+    @Update("update dept set name = #{name} , update_time = #{updateTime} where id = #{id};")
+    void update(Dept dept);
+```
+> 更新部门的SQL语句，使用了MyBatis的注解方式
+
+**公共路径抽取(`@RequestMapping`):**
+
+**DepController.java**
+```java
+@RequestMapping("/depts")
+@RestController
+public class DepController {
+
+    @Autowired
+    private DeptService deptService;
+    //@RequestMapping(value = "/depts",method = RequestMethod.GET)
+    @GetMapping
+    public Result list(){
+        System.out.println("查询全部部门数据");
+        List<Dept> deptList = deptService.findAll();
+        return Result.success(deptList);
+    }
+
+    /**
+     * 删除部门 - 方式一：HttpServletRequest 获取请求参数
+     */
+//    @DeleteMapping("/depts")
+//    public Result delete(HttpServletRequest request){
+//        String idStr = request.getParameter("id");
+//        int id = Integer.parseInt(idStr);
+//        System.out.println("删除部门id为：" + id);
+//        return Result.success();
+//    }
+
+    /**
+     * 删除部门 - 方式二：@RequestParam 获取请求参数
+     * 注意事项：一旦声明了@RequestParam注解，该参数在请求时必须传递，如果不传递将会报错(默认 required 为 true)     */
+//    @DeleteMapping("/depts")
+//    public Result delete(@RequestParam(value = "id",required = false) Integer deptId){
+//        System.out.println("删除部门id为：" + deptId);
+//        return Result.success();
+//    }
+
+    /**
+     * 删除部门 - 方式三：省略@RequestParam(前端传递的请求参数与服务端方法形参名一致)
+     */
+    @DeleteMapping
+    public Result delete(Integer id) {
+        System.out.println("删除部门id为：" + id);
+        deptService.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 新增部门
+     */
+    @PostMapping
+    public Result add(@RequestBody Dept dept){
+        System.out.println("新增部门：" + dept);
+        deptService.add(dept);
+        return Result.success();
+    }
+
+//    /**
+//     * 根据ID查询部门
+//     */
+//    @GetMapping("/depts/{id}")
+//    public Result getInfo(@PathVariable("id") Integer deptId){
+//        System.out.println("根据ID查询部门 : "+ deptId);
+//        return Result.success();
+//    }
+
+    /**
+     * 根据ID查询部门
+     */
+    @GetMapping("/{id}")
+    public Result getInfo(@PathVariable Integer id){
+        System.out.println("根据ID查询部门 : "+ id);
+        Dept dept = deptService.getById(id);
+        return Result.success(dept);
+    }
+
+    /**
+     * 修改部门
+     */
+    @PutMapping
+    public Result update(@RequestBody Dept dept){
+        System.out.println("修改部门：" + dept);
+        deptService.update(dept);
+        return Result.success();
+    }
+}
+```
+> 直接抽取`@RequestMapping("/depts")`
+
+**Logback日志技术:**
+- **Logback**: 是SpringBoot默认的日志技术
+- **Logback**: 基于**Log4j**升级而来,提供了更多的功能和配置选项,性能优于Log4j
+- **Slf4j**: 是`Logback`的抽象层,提供了统一的日志接口,任何日志实现都可以实现这个接口,但是底层实现是`Logback`或`Log4j`
+
+**在`resources`目录下创建`logback.xml`配置文件:**
+
+**logback.xml**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度  %logger{50}: 最长50个字符(超出.切割)  %msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- 日志输出级别 -->
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
+```
+
+**入门程序:**
+
+**LogTest.xml:**
+```java
+package com.shadow;
+
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
+
+public class LogTest {
+
+    // 日志记录器
+    private static final Logger log = LoggerFactory.getLogger(LogTest.class);
+    @Test
+    public void testLog(){
+        //System.out.println(LocalDateTime.now() + " : 开始计算...");
+        log.debug("开始计算...");
+
+        int sum = 0;
+        int[] nums = {1, 5, 3, 2, 1, 4, 5, 4, 6, 7, 4, 34, 2, 23};
+        for (int num : nums) {
+            sum += num;
+        }
+
+        log.info("计算结果为: "+ sum);
+        //System.out.println("计算结果为: "+sum);
+        //System.out.println(LocalDateTime.now() + "结束计算...");
+        log.debug("结束计算...");
+    }
+
+}
+```
+
+**运行结果：**
+```text
+2026-05-04 14:19:34.574 [main] DEBUG com.shadow.LogTest - 开始计算...
+2026-05-04 14:19:34.577 [main] INFO  com.shadow.LogTest - 计算结果为: 101
+2026-05-04 14:19:34.578 [main] DEBUG com.shadow.LogTest - 结束计算...
+```
+
+**完整的`LogTest.xml`**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d 表示日期，%thread 表示线程名，%-5level表示级别从左显示5个字符宽度，%logger显示日志记录器的名称， %msg表示日志消息，%n表示换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}-%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 系统文件输出 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名, %i表示序号 -->
+            <FileNamePattern>D:/tlias-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <!-- 最多保留的历史日志文件数量 -->
+            <MaxHistory>30</MaxHistory>
+            <!-- 最大文件大小，超过这个大小会触发滚动到新文件，默认为 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d 表示日期，%thread 表示线程名，%-5level表示级别从左显示5个字符宽度，%msg表示日志消息，%n表示换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50}-%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="ALL">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
+```
+**上面配置的含义是：**
+- 所有日志 → 按指定格式 → 同时输出到控制台和文件
+- 文件按“时间+大小”自动切割，保留30天
+
+**日志级别:**
+
+**从低到高（从“最详细”到“最严重”）:**
+```text
+TRACE < DEBUG < INFO < WARN < ERROR
+```
+- `trace`:**追踪、记录程序**运行的所有信息(使用较少)
+- `debug`:**调试、记录程序**运行过程中出现的信息,实际应用中一般将其视为最低级别(使用较多)
+- `info`:**记录一般信息,描述程序运行的关键事件**,如:网络连接、io操作(使用较多)
+- `warn`:**警告信息,记录潜在有害的情况**(使用较多)
+- `error`:**错误信息**(使用较多)
+- **根据配置的日志级别，输出此级别及以上级别的日志信息**
+
+
+**创建日志器的简易方法:**
+- 在类中添加`@Slf4j`注解
+```java
+@Slf4j
+@RequestMapping("/depts")
+@RestController
+public class DepController {
+    @Autowired
+    private DeptService deptService;
+    //@RequestMapping(value = "/depts",method = RequestMethod.GET)
+    @GetMapping
+    public Result list(){
+        //System.out.println("查询全部部门数据");
+        log.info("查询全部部门数据");
+        List<Dept> deptList = deptService.findAll();
+        return Result.success(deptList);
+    } 
+    // 省略...  
+}
+```
+
+**员工管理(功能开发):**
+
+**多表关系:**
+- **一对多**
+- **一对一**
+- **多对多**
+
+**一对多:**
+- **一个部门对应多个员工**
+
+**外键约束：确保数据表之间的完整性和一致性**
+```sql
+alter table emp add constraint fk_emp_dept_id foreign key (dept_id) references dept(id);
+```
+> 给 emp 表添加一个外键约束： emp.dept_id 必须引用 dept 表中的 id
+
+**两种外键约束:**
+- **物理外键:使用`foreign key`定义外键**
+- **逻辑外键(推荐):在业务逻辑中,解决外键关联**
+
+**一对一:**
+- **用户 与 身份证信息 的关系**
+
+**多对多:**
+- **学生 与 课程的关系**
+- **关系:一个学生可以选修多门课程,一门课程也可以供多个学生选择**
+- **实现:建立第三张中间表,中间表至少包含两个外键,分别关联两方主键**
+
+**多表设计案例:**
+```sql
+-- 多表设计: 案例
+-- 表 : dep(1) -----> emp(n)  emp(1) -----> emp_expr(n)
+create table emp_expr(
+    id int unsigned primary key auto_increment comment 'ID,主键',
+    begin date comment '开始时间',
+    end date comment '结束时间',
+    company varchar(50) comment '公司名称',
+    job varchar(50) comment '职位',
+    emp_id int unsigned comment '关联的员工ID'
+) comment '工作经历表'
+```
+
+**多表查询:**
+- **内连接:两表交集**
+- **左外连接:两表交集+左表所有数据**
+- **右外连接:两表交集+右表所有数据**
+- **子查询:查询的嵌套(在查询的结果中再查询一次)**
+
+**多表查询SQL语句:**
+```sql
+-- 查询
+select * from emp,dept where emp.dept_id = dept.id;
+```
+> 在多表查询时,需要消除无效的笛卡尔积
+
+**内连接:**
+```sql
+-- ============================= 内连接 ==========================
+-- A. 查询所有员工的ID, 姓名 , 及所属的部门名称 (隐式、显式内连接实现)
+-- 隐式
+select emp.id , emp.name , dept.name from emp,dept where emp.dept_id = dept.id;
+
+-- 显式
+select emp.id , emp.name , dept.name from emp inner join dept on emp.dept_id = dept.id;
+
+select emp.id , emp.name , dept.name from emp join dept on emp.dept_id = dept.id;
+
+
+-- B. 查询 性别为男, 且工资 高于8000 的员工的ID, 姓名, 及所属的部门名称 (隐式、显式内连接实现)
+-- 隐式
+select emp.id , emp.name , dept.name from emp,dept where emp.dept_id = dept.id and emp.gender = 1 and emp.salary > 8000;
+
+-- 显式
+select emp.id , emp.name , dept.name from emp join dept on emp.dept_id = dept.id where emp.gender = 1 and emp.salary > 8000;
+
+-- 为表起别名
+select e.id , e.name , d.name from emp e  join dept d on e.dept_id = d.id where e.gender = 1 and e.salary > 8000;
+```
+
+**外连接:**
+```sql
+-- =============================== 外连接 ============================
+-- A. 查询员工表 所有 员工的姓名, 和对应的部门名称 (左外连接)
+select e.name,d.name from emp e left join dept d on e.dept_id = d.id;
+
+-- B. 查询部门表 所有 部门的名称, 和对应的员工名称 (右外连接)
+select d.name,e.name from emp e right join dept d on e.dept_id = d.id;
+
+-- C. 查询工资 高于8000 的 所有员工的姓名, 和对应的部门名称 (左外连接)
+select e.name,d.name from emp e left join dept d on e.dept_id = d.id where e.salary > 8000;
+
+-- 右外连接
+select e.name,d.name from  dept d right join emp e  on e.dept_id = d.id where e.salary > 8000;
+```
+
+**子查询(查询的嵌套):**
+- **标量子查询**:子查询返回的结果为单个值
+- **列子查询**:子查询返回的结果为一列
+- **行子查询**:子查询返回的结果为一行
+- **表子查询**:子查询返回的结果为多行多列
+```sql
+-- ========================= 子查询 ================================
+-- 标量子查询
+-- A. 查询 最早入职 的员工信息
+-- a.获取最早入职时间
+select min(entry_date) from emp;
+
+-- b.查询 最早入职 的员工信息
+select * from emp where entry_date = '2000-01-01';
+
+select * from emp where entry_date = (select min(entry_date) from emp);
+
+
+
+-- B. 查询在 "阮小五" 入职之后入职的员工信息
+-- a. 查询"阮小五"的入职时间
+select entry_date from emp where name = '阮小五';
+
+-- b. 查询在 该时间 之后入职的员工信息
+select * from emp where entry_date > '2015-01-01' ;
+
+select * from emp where entry_date > (select entry_date from emp where name = '阮小五');
+
+
+
+
+-- 列子查询
+-- A. 查询 "教研部" 和 "咨询部" 的所有员工信息
+-- a. 查询 "教研部" 和 "咨询部" 的部门ID
+select id from dept where name = '教研部' or name = '咨询部';
+
+-- b. 查询指定部门ID的员工信息
+select * from emp where dept_id in (2,3);
+
+select * from emp where dept_id in (select id from dept where name = '教研部' or name = '咨询部');
+
+
+
+-- 行子查询
+-- A. 查询与 "李忠" 的薪资 及 职位都相同的员工信息 ;
+-- a. 查询与 "李忠" 的薪资 及 职位
+select salary,job from emp where name = '李忠';
+
+-- b. 查询指定薪资和职位的员工信息
+select * from emp where salary = 5000 and job = 5;
+
+select * from emp where salary = (select salary from emp where name = '李忠') and job = (select job from emp where name = '李忠');
+
+-- 优化:
+select * from emp where (salary,job) = (5000,5);
+
+select * from emp where (salary,job) = (select salary,job from emp where name = '李忠');
+
+-- 表子查询
+-- A. 获取每个部门中薪资最高的员工信息
+-- a. 获取每个部门的最高薪资
+select  dept_id,max(salary) from emp group by dept_id;
+
+-- b. 查询每个部门中薪资最高的员工信息
+select * from emp e, (select  dept_id,max(salary) max_sal from emp group by dept_id) a
+    where e.dept_id = a.dept_id and e.salary = a.max_sal;
+```
+
+**表子查询:**
+```sql
+
+-- 表子查询
+-- A. 获取每个部门中薪资最高的员工信息
+-- a. 获取每个部门的最高薪资
+select  dept_id,max(salary) from emp group by dept_id;
+
+-- b. 查询每个部门中薪资最高的员工信息
+select * from emp e, (select  dept_id,max(salary) max_sal from emp group by dept_id) a
+    where e.dept_id = a.dept_id and e.salary = a.max_sal;
+
+```
+> 其中`a.`的sql语句可以看做一张表,然后拿到`b.`里面去查询
+
+**多表查询案例：**
+```sql
+-- 需求:
+-- 1. 查询 "教研部" 性别为 男，且在 "2011-05-01" 之后入职的员工信息 。
+-- 自己写的:
+select id from dept where name = '教研部';
+select * from emp where entry_date > '2011-05-01';
+select * from emp where dept_id = (select id from dept where name = '教研部') and entry_date > '2011-05-01';
+-- 自己写的是子查询，答案写的是多表连接一般情况下性能更好适合复杂查询
+-- 答案:
+select e.* from emp e,dept d where e.dept_id = d.id and d.name = '教研部' and e.gender = 1 and e.entry_date > '2011-05-01';
+
+-- 2. 查询工资 低于公司平均工资的 且 性别为男 的员工信息 。
+-- a. 计算平均薪资
+select avg(salary) from emp;
+-- b. 查询低于 平均薪资 且 性别为男 的员工信息
+select * from emp where salary < (select avg(salary) from emp) and gender = 1;
+
+-- 3. 查询部门人数超过 10 人的部门名称 。
+-- 表: dept,emp
+select d.name,count(*) from emp e , dept d where e.dept_id = d.id group by d.name having count(*) > 10;
+
+-- 4. 查询在 "2010-05-01" 后入职，且薪资高于 10000 的 "教研部" 员工信息，并根据薪资倒序排序。
+-- 表: dept,emp
+select * from emp e, dept d where e.dept_id =d.id and e.entry_date > '2010-05-01'
+                              and e.salary > 10000 and d.name = '教研部' order by e.salary desc ;
+
+-- 5. 查询工资 低于本部门平均工资的员工信息 。
+-- 5.1 查询每个部门的平均薪资
+select dept_id,avg(salary) avg_sal from emp group by dept_id;
+
+-- 5.2 查询低于平均薪资的员工信息
+select e.* from emp e,(select dept_id,avg(salary) avg_sal from emp group by dept_id) a
+    where e.dept_id = a.dept_id and e.salary < a.avg_sal;
+```
+
+**员工管理(功能开发):**
+
+**准备工作:**
+- **创建相应的`Controller`、`Service`和`Mapper`**
+
+**分页查询(代码实现):**
+
+**EmpController.java**
+```java
+    @Autowired
+    private EmpService empService;
+
+    /**
+     * 分页查询
+     */
+    @GetMapping
+    public Result page(@RequestParam(defaultValue = "1") Integer page,
+                       @RequestParam(defaultValue = "10") Integer pageSize){
+        log.info("分页查询:{},{}",page,pageSize);
+        PageResult<Emp> pageResult = empService.page(page,pageSize);
+        return Result.success(pageResult);
+    }
+```
+
+**EmpServiceImpl.java**
+```java
+    @Autowired
+    private EmpMapper empMapper;
+    @Override
+    public PageResult<Emp> page(Integer page, Integer pageSize) {
+        // 1. 调用mapper接口,查询总记录数
+        Long total = empMapper.count();
+
+        // 2. 调用mapper接口,查询结果列表
+        //page：当前第几页（从1开始）
+        //pageSize：每页多少条数据
+        Integer start = (page -1) * pageSize;
+        List<Emp> rows = empMapper.list(start, pageSize);
+
+        // 3. 封装结果 PageResult
+        return new PageResult<>(total, rows);
+    }
+```
+
+**EmpMapper.java**
+```java
+/**
+ * 员工信息
+ */
+@Mapper
+public interface EmpMapper {
+
+    /**
+     * 查询总记录数
+     */
+    @Select("select count(*) from emp e left join dept d on e.dept_id = d.id")
+    public Long count();
+
+    /**
+     * 分页查询
+     */
+    @Select("select e.*,d.name deptName from emp e left join dept d on e.dept_id = d.id " +
+            "order by e.update_time desc limit #{start},#{pageSize}")
+    public List<Emp> list(Integer start,Integer pageSize);
+}
+```
+
+**Apifox测试(GET):**
+```text
+http://localhost:8080/emps?page=1&pageSize=5
+```
+
+**分页查询(PageHelper分页插件):**
+
+**PageHelper:**
+> `PageHelper`:是第三方提供的在Mybatis框架中用来实现分页的插件,用来**简化分页操作,提高开发效率**。
+
+**pom.xml**
+```xml
+		<!--分页插件PageHelper-->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+```
+
+**EmpMapper.java**
+```java
+    /**
+     * 分页查询
+     */
+    @Select("select e.*,d.name deptName from emp e left join dept d on e.dept_id = d.id order by e.update_time desc")
+    public List<Emp> list();
+```
+
+**EmpServiceImpl.java**
+```java
+    /**
+     * PageHelper分页查询
+     * @param page 页码
+     * @param pageSize 每页记录数
+     */
+    @Override
+    public PageResult<Emp> page(Integer page, Integer pageSize) {
+        // 1. 设置分页参数(PageHelper)
+        PageHelper.startPage(page,pageSize);
+
+        // 2. 执行查询
+        List<Emp> empList = empMapper.list();
+
+        // 3. 解析查询结果,并封装数据
+        Page<Emp> p = (Page<Emp>) empList;
+
+        return new PageResult<Emp>(p.getTotal(),p.getResult());
+
+    }
+```
+
+**PageHelper实现机制:**
+- **`PageHelper`定义的SQL语句不能加分号**
+- **`PageHelper`仅仅能对紧跟在其后的第一个查询语句进行分页处理**
+
+**分页查询(条件分页查询):**
